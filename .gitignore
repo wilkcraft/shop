@@ -1,0 +1,12 @@
+# Secrets
+.env
+.env.*
+
+# Dependencies
+node_modules/
+
+# Database (users and carts)
+backend/data/
+
+# Logs
+*.log

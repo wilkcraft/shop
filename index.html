@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WilkShop | Online Store</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      .cart-sidebar {
+        transition: transform 0.3s ease-in-out;
+      }
+
+      @keyframes bounceCart {
+        0% {
+          transform: scale(1);
+        }
+        30% {
+          transform: scale(1.3);
+        }
+        60% {
+          transform: scale(0.9);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .cart-bounce {
+        animation: bounceCart 0.4s ease;
+      }
+
+      @keyframes fadeSlide {
+        0% {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .toast-show {
+        animation: fadeSlide 0.3s ease forwards;
+      }
+
+      #popup,
+      #undo-banner {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+      }
+
+      #undo-banner {
+        bottom: 2rem;
+      }
+
+      .wilkcraft-link {
+        position: relative;
+        color: inherit;
+        text-decoration: none;
+        font-weight: bold;
+        padding-bottom: 3px;
+        transition: color 0.25s ease;
+      }
+
+      .wilkcraft-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 2px;
+        background-color: currentColor;
+        transition:
+          background-color 0.25s ease,
+          transform 0.35s ease;
+        transform-origin: center;
+      }
+
+      .wilkcraft-link:hover::after {
+        transform: scaleX(1.2);
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-50">
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+      <div
+        class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center"
+      >
+        <h1 class="text-2xl font-bold tracking-tight">WilkShop</h1>
+
+        <div class="flex items-center gap-4">
+          <button id="user-btn" class="text-sm font-medium">Log in</button>
+
+          <button id="cart-btn" onclick="toggleCart()" class="relative p-2">
+            🛒
+            <span
+              id="cart-count"
+              class="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+              >0</span
+            >
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <header class="bg-gray-200 py-20 text-center">
+      <h2 class="text-5xl font-bold mb-4">WilkShop</h2>
+      <p class="text-gray-600 mb-8 text-lg font-medium">
+        Powerful tech at the best price.
+      </p>
+      <button
+        onclick="scrollToProducts()"
+        class="bg-black text-white px-8 py-3 rounded-full hover:bg-gray-800 transition"
+      >
+        View products
+      </button>
+    </header>
+
+    <main id="products" class="max-w-6xl mx-auto px-4 py-12">
+      <div
+        id="product-grid"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+      ></div>
+    </main>
+
+    <div
+      id="cart-overlay"
+      onclick="toggleCart()"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden z-[60]"
+    ></div>
+
+    <footer class="bg-black text-white mt-20">
+      <div
+        class="border-t border-gray-800 text-center py-6 text-gray-500 text-sm"
+      >
+        © 2026 WilkShop · Developed by
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="wilkcraft-link"
+          href="https://www.wilkcraft.work/"
+        >
+          Wilkcraft
+        </a>
+      </div>
+    </footer>
+
+    <div
+      id="toast"
+      class="fixed bottom-6 right-6 bg-black text-white px-6 py-3 rounded-lg shadow-lg opacity-0 pointer-events-none"
+    >
+      Product added to cart 🛒
+    </div>
+
+    <div
+      id="popup"
+      class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-black text-white px-6 py-3 rounded-lg shadow-lg opacity-0 pointer-events-none z-[300] whitespace-nowrap"
+    ></div>
+
+    <div
+      id="account-popup"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden z-[400] flex items-center justify-center"
+    >
+      <div
+        class="bg-white p-6 rounded-2xl w-full max-w-xs text-center relative"
+      >
+        <button onclick="closeAccountPopup()" class="absolute top-3 right-3">
+          ✕
+        </button>
+
+        <h3 class="text-lg font-bold mb-6">My account</h3>
+
+        <div class="flex flex-col gap-3">
+          <button
+            onclick="logout()"
+            class="bg-gray-900 text-white py-2 rounded-lg hover:bg-gray-800 transition"
+          >
+            Log out
+          </button>
+
+          <button
+            onclick="deleteAccount()"
+            class="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition"
+          >
+            Delete account
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="undo-banner"
+      class="fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-black text-white px-6 py-3 rounded-lg shadow-lg opacity-0 pointer-events-none flex items-center gap-4 z-[500] whitespace-nowrap"
+    >
+      <span id="undo-text">Product removed</span>
+      <button onclick="undoRemove()" class="underline font-semibold">
+        Undo
+      </button>
+    </div>
+
+    <div
+      id="cart-sidebar"
+      class="fixed right-0 top-0 h-full w-80 bg-white shadow-xl z-[70] translate-x-full cart-sidebar p-6"
+    >
+      <div class="flex justify-between items-center mb-8">
+        <h3 class="text-xl font-bold">Your Cart</h3>
+        <button onclick="toggleCart()" class="text-gray-500 text-2xl">✕</button>
+      </div>
+
+      <div
+        id="cart-items"
+        class="space-y-4 max-h-[65vh] overflow-y-auto pr-2"
+      ></div>
+
+      <div class="absolute bottom-0 left-0 w-full p-6 border-t bg-white">
+        <div class="flex justify-between font-bold text-lg mb-4">
+          <span>Total:</span>
+          <span id="cart-total">€0.00</span>
+        </div>
+
+        <button
+          onclick="checkout()"
+          class="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800"
+        >
+          Checkout
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="payment-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden z-[100] flex items-center justify-center"
+    >
+      <div
+        class="bg-white w-full max-w-md rounded-2xl p-8 relative max-h-[90vh] overflow-y-auto"
+      >
+        <button
+          onclick="closePaymentModal()"
+          class="absolute top-4 right-4 text-gray-500 text-xl"
+        >
+          ✕
+        </button>
+
+        <h3 class="text-2xl font-bold mb-6 text-center">Complete Payment</h3>
+
+        <form id="payment-form" class="space-y-6">
+          <div id="payment-element"></div>
+
+          <button
+            id="submit-payment"
+            class="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition"
+          >
+            Pay now
+          </button>
+
+          <p id="payment-message" class="text-red-500 text-sm text-center"></p>
+        </form>
+      </div>
+    </div>
+
+    <div
+      id="auth-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden z-[200] flex items-center justify-center"
+    >
+      <div class="bg-white p-8 rounded-2xl w-full max-w-sm relative">
+        <button onclick="closeAuthModal()" class="absolute top-3 right-3">
+          ✕
+        </button>
+
+        <h3 id="auth-title" class="text-xl font-bold mb-4 text-center">
+          Login
+        </h3>
+
+        <input
+          id="auth-email"
+          type="email"
+          placeholder="Email"
+          class="w-full mb-3 p-2 border rounded"
+        />
+
+        <input
+          id="auth-password"
+          type="password"
+          placeholder="Password"
+          class="w-full mb-4 p-2 border rounded"
+        />
+
+        <button
+          onclick="handleAuth()"
+          class="w-full bg-black text-white py-2 rounded mb-3"
+        >
+          Continue
+        </button>
+
+        <p class="text-center text-sm">
+          <span id="toggle-text">Don't have an account?</span>
+          <button id="toggle-btn" onclick="toggleAuthMode()" class="font-bold">
+            Sign up
+          </button>
+        </p>
+      </div>
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+      const stripe = Stripe(
+        "pk_test_51T6bwJ1xTRQyGRaCOGIvgGMV0Mcd810oUAELmmQPnWrTZT65jpSdNJhw6hKl8t2DoihxIaZRfz5IHITtN7IGmvjn00jOlL4Nqi",
+      );
+
+      const products = [
+        {
+          id: 1,
+          name: "Gaming Laptop RTX 4060",
+          price: 1299,
+          img: "https://images.unsplash.com/photo-1630794180018-433d915c34ac",
+        },
+        {
+          id: 2,
+          name: "RGB Mechanical Keyboard Pro",
+          price: 89,
+          img: "https://images.unsplash.com/photo-1756694938681-23f28a08fdde",
+        },
+        {
+          id: 3,
+          name: "Gaming Mouse 16000 DPI",
+          price: 49,
+          img: "https://images.unsplash.com/photo-1629429408209-1f912961dbd8",
+        },
+        {
+          id: 4,
+          name: "27'' 144Hz Full HD Monitor",
+          price: 249,
+          img: "https://images.unsplash.com/photo-1674505921901-e54fe119f0a4",
+        },
+        {
+          id: 5,
+          name: "UltraSpeed 1TB NVMe SSD",
+          price: 119,
+          img: "https://images.unsplash.com/photo-1686705562930-4f3e46f620d8",
+        },
+        {
+          id: 6,
+          name: "7.1 Gaming Headset",
+          price: 69,
+          img: "https://images.unsplash.com/photo-1660391532247-4a8ad1060817",
+        },
+      ];
+
+      let token = localStorage.getItem("token") || null;
+      let cart = JSON.parse(localStorage.getItem("wilkshop_cart")) || [];
+      let lastRemoved = null;
+
+      function renderProducts() {
+        const grid = document.getElementById("product-grid");
+
+        grid.innerHTML = products
+          .map(
+            (product) => `
+          <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition group">
+            <div class="h-80 bg-gray-100 overflow-hidden">
+              <img src="${product.img}"
+                   class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            </div>
+            <div class="p-4">
+              <h4 class="font-semibold text-lg">${product.name}</h4>
+              <p class="text-gray-500 mb-4">€${product.price.toFixed(2)}</p>
+
+              <div class="flex gap-2">
+                <input type="number" id="qty-${product.id}" value="1" min="1"
+                  class="w-16 border-2 border-gray-200 rounded-lg px-2 text-center focus:border-black outline-none">
+
+                <button onclick="addToCart(${product.id})"
+                  class="flex-1 border-2 border-black py-2 rounded-lg hover:bg-black hover:text-white transition font-medium">
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+        `,
+          )
+          .join("");
+      }
+
+      function addToCart(id) {
+        const qtyInput = document.getElementById(`qty-${id}`);
+        const quantity = parseInt(qtyInput.value) || 1;
+
+        const existing = cart.find((p) => p.id === id);
+
+        if (existing) {
+          existing.quantity += quantity;
+        } else {
+          const product = products.find((p) => p.id === id);
+          cart.push({ ...product, quantity });
+        }
+
+        qtyInput.value = 1;
+
+        updateCart();
+        animateCartIcon();
+        showToast();
+      }
+
+      function changeQuantity(id, delta) {
+        const product = cart.find((p) => p.id === id);
+        if (!product) return;
+
+        if (product.quantity + delta <= 0) {
+          lastRemoved = { ...product };
+          cart = cart.filter((item) => item.id !== id);
+          updateCart();
+          showUndoBanner();
+          return;
+        }
+
+        product.quantity += delta;
+        updateCart();
+      }
+
+      function removeItem(id) {
+        const item = cart.find((p) => p.id === id);
+        if (!item) return;
+
+        lastRemoved = { ...item };
+
+        cart = cart.filter((p) => p.id !== id);
+        updateCart();
+
+        showUndoBanner();
+      }
+
+      function updateCart() {
+        const cartItems = document.getElementById("cart-items");
+        const cartCount = document.getElementById("cart-count");
+        const cartTotal = document.getElementById("cart-total");
+
+        cartCount.innerText = cart.reduce(
+          (sum, item) => sum + item.quantity,
+          0,
+        );
+
+        cartItems.innerHTML = cart
+          .map(
+            (item) => `
+          <div class="flex items-center justify-between border-b pb-4">
+            <div class="flex items-center gap-3">
+              <img src="${item.img}" class="w-12 h-12 object-cover rounded">
+              <div>
+                <p class="text-sm font-semibold">${item.name}</p>
+                <p class="text-xs text-gray-500">€${item.price.toFixed(2)}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+  <button onclick="changeQuantity(${item.id}, -1)">-</button>
+  <span>${item.quantity}</span>
+  <button onclick="changeQuantity(${item.id}, 1)">+</button>
+
+  <button onclick="removeItem(${item.id})"
+  class="p-1 rounded hover:bg-red-50 transition group" title="Remove product">
+
+  <svg class="w-4 h-4 text-gray-400 group-hover:text-red-500 transition"
+     fill="none" stroke="currentColor" stroke-width="2"
+     viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round"
+        d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6" />
+</svg>
+
+</button>
+</div>
+          </div>
+        `,
+          )
+          .join("");
+
+        const total = cart.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0,
+        );
+        cartTotal.innerText = `€${total.toFixed(2)}`;
+
+        if (token) {
+          saveCartToBackend();
+        } else {
+          localStorage.setItem("wilkshop_cart", JSON.stringify(cart));
+        }
+      }
+
+      let undoTimeout;
+
+      function showUndoBanner() {
+        const banner = document.getElementById("undo-banner");
+        const text = document.getElementById("undo-text");
+
+        if (lastRemoved) {
+          text.innerText = `${lastRemoved.name} removed`;
+        }
+
+        banner.classList.remove("opacity-0", "pointer-events-none");
+        banner.classList.add("toast-show");
+
+        clearTimeout(undoTimeout);
+
+        undoTimeout = setTimeout(() => {
+          banner.classList.add("opacity-0", "pointer-events-none");
+          banner.classList.remove("toast-show");
+          lastRemoved = null;
+        }, 4000);
+      }
+
+      function undoRemove() {
+        if (!lastRemoved) return;
+
+        const existing = cart.find((p) => p.id === lastRemoved.id);
+
+        if (existing) {
+          existing.quantity += lastRemoved.quantity;
+        } else {
+          cart.push(lastRemoved);
+        }
+
+        lastRemoved = null;
+        updateCart();
+
+        const banner = document.getElementById("undo-banner");
+
+        clearTimeout(undoTimeout);
+
+        banner.classList.add("opacity-0", "pointer-events-none");
+        banner.classList.remove("toast-show");
+      }
+
+      function animateCartIcon() {
+        const cartIcon = document.getElementById("cart-btn");
+        cartIcon.classList.add("cart-bounce");
+
+        setTimeout(() => {
+          cartIcon.classList.remove("cart-bounce");
+        }, 400);
+      }
+
+      function showToast() {
+        const toast = document.getElementById("toast");
+        toast.classList.remove("opacity-0");
+        toast.classList.add("toast-show");
+
+        setTimeout(() => {
+          toast.classList.add("opacity-0");
+          toast.classList.remove("toast-show");
+        }, 2000);
+      }
+
+      function toggleCart() {
+        document
+          .getElementById("cart-sidebar")
+          .classList.toggle("translate-x-full");
+        document.getElementById("cart-overlay").classList.toggle("hidden");
+      }
+
+      function closeCart() {
+        document
+          .getElementById("cart-sidebar")
+          .classList.add("translate-x-full");
+        document.getElementById("cart-overlay").classList.add("hidden");
+      }
+
+      let elements;
+      let clientSecret;
+
+      async function checkout() {
+        if (cart.length === 0) {
+          showPopup("Your cart is empty", "error");
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/create-payment-intent", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ items: cart }),
+          });
+
+          const data = await response.json();
+          clientSecret = data.clientSecret;
+
+          const appearance = {
+            theme: "stripe",
+          };
+
+          elements = stripe.elements({ appearance, clientSecret });
+
+          const paymentElement = elements.create("payment");
+          paymentElement.mount("#payment-element");
+
+          openPaymentModal();
+        } catch (error) {
+          showPopup("Error starting the payment", "error");
+        }
+      }
+
+      function openPaymentModal() {
+        document.getElementById("payment-modal").classList.remove("hidden");
+      }
+
+      function closePaymentModal() {
+        document.getElementById("payment-modal").classList.add("hidden");
+      }
+
+      function scrollToProducts() {
+        document
+          .getElementById("products")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+
+      const paymentForm = document.getElementById("payment-form");
+
+      paymentForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const { error, paymentIntent } = await stripe.confirmPayment({
+          elements,
+          redirect: "if_required",
+        });
+
+        if (error) {
+          document.getElementById("payment-message").textContent =
+            error.message;
+          return;
+        }
+
+        if (paymentIntent && paymentIntent.status === "succeeded") {
+          cart = [];
+          localStorage.removeItem("wilkshop_cart");
+          updateCart();
+
+          document
+            .getElementById("cart-sidebar")
+            .classList.add("translate-x-full");
+          document.getElementById("cart-overlay").classList.add("hidden");
+
+          document.getElementById("payment-form").innerHTML = `
+  <div class="flex flex-col items-center text-center py-6 px-4 animate-[fadeSlide_0.3s_ease]">
+
+    <div class="w-14 h-14 flex items-center justify-center
+                rounded-full bg-green-100 mb-4">
+      <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor"
+           stroke-width="3" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round"
+              d="M5 13l4 4L19 7" />
+      </svg>
+    </div>
+
+    <h4 class="text-lg sm:text-xl font-semibold mb-1">
+      Payment completed
+    </h4>
+
+    <p class="text-gray-500 text-sm sm:text-base mb-5">
+      Thank you for your purchase at WilkShop.
+    </p>
+
+    <button onclick="closePaymentModal()"
+      class="w-full sm:w-auto bg-black text-white
+             px-5 py-2.5 rounded-lg text-sm font-medium
+             hover:bg-gray-800 transition">
+      Close
+    </button>
+
+  </div>
+`;
+        }
+      });
+
+      async function register(email, password) {
+        const res = await fetch("/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showPopup(data.error || "Registration error", "error");
+          return false;
+        }
+
+        showPopup("Account created successfully");
+        return true;
+      }
+
+      async function login(email, password) {
+        const res = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+
+        if (data.token) {
+          token = data.token;
+          localStorage.setItem("token", token);
+
+          cart = [];
+
+          await loadCartFromBackend();
+          updateUserUI();
+        } else {
+          showPopup("Incorrect email or password", "error");
+        }
+      }
+
+      async function loadCartFromBackend() {
+        if (!token) return;
+
+        const res = await fetch("/api/cart", {
+          headers: {
+            Authorization: token,
+          },
+        });
+
+        const data = await res.json();
+
+        cart = data || [];
+        updateCart();
+      }
+
+      async function saveCartToBackend() {
+        await fetch("/api/cart", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify({ cart }),
+        });
+      }
+
+      let isLogin = true;
+
+      function openAuthModal() {
+        isLogin = true;
+
+        document.getElementById("auth-title").innerText = "Login";
+        document.getElementById("toggle-text").innerText =
+          "Don't have an account?";
+        document.getElementById("toggle-btn").innerText = "Sign up";
+
+        document.getElementById("auth-modal").classList.remove("hidden");
+      }
+
+      function closeAuthModal() {
+        document.getElementById("auth-modal").classList.add("hidden");
+      }
+
+      function toggleAuthMode() {
+        isLogin = !isLogin;
+
+        document.getElementById("auth-title").innerText = isLogin
+          ? "Login"
+          : "Sign up";
+
+        document.getElementById("toggle-text").innerText = isLogin
+          ? "Don't have an account?"
+          : "Already have an account?";
+
+        document.getElementById("toggle-btn").innerText = isLogin
+          ? "Sign up"
+          : "Log in";
+      }
+
+      async function handleAuth() {
+        const email = document.getElementById("auth-email").value;
+        const password = document.getElementById("auth-password").value;
+
+        if (!email || !password) {
+          showPopup("Fill in all fields", "error");
+          return;
+        }
+
+        if (isLogin) {
+          const prevToken = token;
+          await login(email, password);
+
+          if (token && token !== prevToken) {
+            showPopup("Welcome 👋");
+          }
+        } else {
+          const ok = await register(email, password);
+
+          if (!ok) return;
+
+          showPopup("Registration complete, please log in");
+        }
+
+        closeAuthModal();
+      }
+
+      function updateUserUI() {
+        const btn = document.getElementById("user-btn");
+
+        if (token) {
+          btn.innerText = "👤 Account";
+          btn.onclick = openAccountPopup;
+        } else {
+          btn.innerText = "Log in";
+          btn.onclick = openAuthModal;
+        }
+      }
+
+      function logout() {
+        token = null;
+        localStorage.removeItem("token");
+
+        cart = JSON.parse(localStorage.getItem("wilkshop_cart")) || [];
+        updateCart();
+
+        closeAccountPopup();
+        closeAuthModal();
+
+        showPopup("Logged out successfully");
+        updateUserUI();
+      }
+
+      function showPopup(message, type = "success") {
+        const popup = document.getElementById("popup");
+
+        popup.textContent = message;
+
+        if (type === "error") {
+          popup.classList.remove("bg-black");
+          popup.classList.add("bg-red-500");
+        } else {
+          popup.classList.remove("bg-red-500");
+          popup.classList.add("bg-black");
+        }
+
+        popup.classList.remove("opacity-0");
+        popup.classList.add("toast-show");
+
+        setTimeout(() => {
+          popup.classList.add("opacity-0");
+          popup.classList.remove("toast-show");
+        }, 2500);
+      }
+
+      function openAccountPopup() {
+        document.getElementById("account-popup").classList.remove("hidden");
+      }
+
+      function closeAccountPopup() {
+        document.getElementById("account-popup").classList.add("hidden");
+      }
+
+      async function deleteAccount() {
+        if (
+          !confirm(
+            "Are you sure you want to delete your account? This action is irreversible.",
+          )
+        )
+          return;
+
+        try {
+          const res = await fetch("/api/delete-account", {
+            method: "DELETE",
+            headers: {
+              Authorization: token,
+            },
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            showPopup(data.error || "Error deleting account", "error");
+            return;
+          }
+
+          logout();
+          closeAccountPopup();
+
+          showPopup("Account deleted successfully");
+        } catch (err) {
+          showPopup("Server error", "error");
+        }
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+
+        const layers = [
+          { id: "account-popup", close: closeAccountPopup },
+          { id: "auth-modal", close: closeAuthModal },
+          { id: "payment-modal", close: closePaymentModal },
+        ];
+
+        for (const layer of layers) {
+          const el = document.getElementById(layer.id);
+          if (!el.classList.contains("hidden")) {
+            layer.close();
+            return;
+          }
+        }
+
+        const overlay = document.getElementById("cart-overlay");
+        if (!overlay.classList.contains("hidden")) {
+          closeCart();
+        }
+      });
+
+      renderProducts();
+      if (token) {
+        loadCartFromBackend();
+      } else {
+        updateCart();
+      }
+      updateUserUI();
+    </script>
+  </body>
+</html>
