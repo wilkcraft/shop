@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Condiciones de compra | Capalab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              bg: "#FAFAF7",
+              surf: "#F1EFE9",
+              line: "#E3E0D8",
+              ink: "#16181D",
+              mute: "#5F646C",
+              dark: "#1B1F27",
+              acc: "#C2410C",
+              acch: "#9A3412",
+              accb: "#F97316",
+            },
+            fontFamily: {
+              head: ["Space Grotesk", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      svg {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      :focus-visible {
+        outline: 3px solid #f97316;
+        outline-offset: 2px;
+      }
+      .legal h1 {
+        font-family: "Space Grotesk", sans-serif;
+        font-weight: 700;
+        font-size: 2rem;
+        line-height: 1.15;
+      }
+      .legal h2 {
+        font-family: "Space Grotesk", sans-serif;
+        font-weight: 700;
+        font-size: 1.25rem;
+        margin: 2.25rem 0 0.5rem;
+      }
+      .legal p,
+      .legal li {
+        color: #3b4049;
+        line-height: 1.7;
+      }
+      .legal p {
+        margin: 0.6rem 0;
+      }
+      .legal ul {
+        list-style: disc;
+        padding-left: 1.25rem;
+        margin: 0.6rem 0;
+      }
+      .legal a {
+        color: #c2410c;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .legal .meta {
+        color: #5f646c;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+      }
+      .pend {
+        background: #f9731633;
+        padding: 0 0.25rem;
+        border-radius: 0.25rem;
+      }
+      .legal .box {
+        background: #f1efe9;
+        border: 1px solid #e3e0d8;
+        border-radius: 1rem;
+        padding: 1rem 1.25rem;
+        margin: 1rem 0;
+      }
+    </style>
+  </head>
+  <body class="bg-bg text-ink antialiased">
+    <nav class="bg-bg/95 border-b border-line">
+      <div
+        class="max-w-3xl mx-auto px-4 h-16 flex justify-between items-center"
+      >
+        <a
+          href="/"
+          class="font-head font-bold text-2xl tracking-tight flex items-center gap-2"
+        >
+          <svg class="w-7 h-7 text-acc" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5" /></svg
+          >Capalab
+        </a>
+        <a
+          href="/"
+          class="text-sm font-semibold underline underline-offset-4 min-h-[44px] flex items-center"
+          >Volver a la tienda</a
+        >
+      </div>
+    </nav>
+    <main class="legal max-w-3xl mx-auto px-4 py-12">
+      <h1>Condiciones de compra</h1>
+      <p class="meta">Última actualización: 31 de octubre de 2026</p>
+
+      <h2>1. Quiénes somos</h2>
+      <p>
+        Estas condiciones regulan las compras realizadas en
+        <a
+          href="https://capalab.wilkcraft.work"
+          class="whitespace-nowrap font-semibold"
+          >https://capalab.wilkcraft.work</a
+        >, cuyo titular es <mark class="pend">Miguel Vallejo Garijo</mark> y
+        domicilio en <mark class="pend">Castellón, España</mark>. Puedes
+        contactarnos en
+        <a href="mailto:contact@wilkcraft.work">contact@wilkcraft.work</a>. Al
+        realizar un pedido aceptas estas condiciones, que te recomendamos leer
+        antes de pagar.
+      </p>
+
+      <h2>2. Productos</h2>
+      <p>
+        Fabricamos las piezas bajo pedido mediante impresión 3D. Por la propia
+        naturaleza del proceso, pueden apreciarse las líneas de capa y pequeñas
+        variaciones de tono respecto a las fotografías, que dependen del
+        material, del lote de filamento y de tu pantalla. Las medidas y pesos
+        indicados son aproximados y pueden variar ligeramente.
+      </p>
+
+      <h2>3. Precios e impuestos</h2>
+      <p>
+        Todos los precios se muestran en euros e incluyen el IVA. Los gastos de
+        envío se indican en el carrito antes de pagar: 4,90 €, o gratis en
+        pedidos de 40 € o más. El precio que ves al finalizar la compra es el
+        definitivo.
+      </p>
+
+      <h2>4. Cómo comprar y cuándo se formaliza el contrato</h2>
+      <p>
+        Elige material y color, añade el producto al carrito y sigue el proceso
+        de pago. El contrato se formaliza cuando se confirma el pago y te
+        enviamos la confirmación del pedido. Si detectas un error en tu pedido,
+        avísanos cuanto antes.
+      </p>
+
+      <h2>5. Pago</h2>
+      <p>
+        El pago se realiza a través de Stripe con tarjeta u otros métodos
+        disponibles en el momento de la compra. Los datos de pago se envían
+        directamente a Stripe mediante conexión cifrada y no pasan por nuestros
+        servidores.
+      </p>
+
+      <h2>6. Plazo y ámbito de entrega</h2>
+      <p>
+        Enviamos a la España peninsular.
+        <strong
+          >No realizamos envíos a Canarias, Ceuta, Melilla ni Baleares.</strong
+        >
+      </p>
+      <p>
+        El plazo estimado es de 4 a 6 días laborables desde la confirmación del
+        pago, incluyendo fabricación y transporte. Es una estimación: si hay un
+        retraso, te avisaremos. Si no entregamos en el plazo acordado, conservas
+        los derechos que te reconoce la normativa de consumidores.
+      </p>
+      <p>
+        Los pedidos se envían con seguimiento. Al recibir el paquete, revisa que
+        el embalaje y el producto estén en buen estado. Si algo llega dañado,
+        escríbenos con una foto y lo solucionamos.
+      </p>
+
+      <h2>7. Derecho de desistimiento (devoluciones en 14 días)</h2>
+      <p>
+        Si eres consumidor, puedes desistir de la compra de productos de
+        catálogo sin dar ninguna explicación en un plazo de
+        <strong>14 días naturales</strong> desde que tú, o un tercero que
+        designes, recibas el producto.
+      </p>
+      <ul>
+        <li>
+          <strong>Cómo ejercerlo:</strong> comunícanoslo de forma inequívoca por
+          email a
+          <a href="mailto:contact@wilkcraft.work">contact@wilkcraft.work</a>.
+          Puedes usar el modelo de formulario del final de esta página, aunque
+          no es obligatorio.
+        </li>
+        <li>
+          <strong>Devolución del producto:</strong> debes devolvérnoslo sin
+          demora indebida y, en cualquier caso, en un máximo de 14 días
+          naturales desde que nos comuniques tu decisión. El coste directo de la
+          devolución corre por tu cuenta.
+        </li>
+        <li>
+          <strong>Estado del producto:</strong> responderás de la disminución de
+          valor que resulte de una manipulación distinta a la necesaria para
+          comprobar su naturaleza y funcionamiento.
+        </li>
+        <li>
+          <strong>Reembolso:</strong> te devolveremos todos los pagos, incluidos
+          los gastos de envío estándar iniciales, en un máximo de 14 días
+          naturales desde que recibamos tu comunicación. Lo haremos por el mismo
+          medio de pago que usaste. Podemos retener el reembolso hasta recibir
+          el producto o hasta que nos acredites haberlo devuelto.
+        </li>
+      </ul>
+
+      <h2>8. Excepciones al desistimiento: piezas a medida</h2>
+      <p>
+        Conforme a la normativa de consumidores, el derecho de desistimiento no
+        se aplica a los productos confeccionados conforme a tus especificaciones
+        o claramente personalizados. Por eso,
+        <strong>las piezas a medida no admiten devolución</strong>, salvo que
+        presenten un defecto o no se correspondan con lo acordado, caso en el
+        que se aplica la garantía legal.
+      </p>
+
+      <h2>9. Garantía legal y piezas defectuosas</h2>
+      <p>
+        Todos los productos tienen la garantía legal de conformidad que
+        establece la normativa de consumidores, que a la fecha de estas
+        condiciones es de 3 años desde la entrega para bienes. Si un producto no
+        se ajusta a lo contratado, puedes solicitar su reparación o sustitución
+        y, si no fuera posible o proporcionado, la rebaja del precio o la
+        resolución del contrato.
+      </p>
+      <p>
+        Si tu pieza llega defectuosa o dañada, escríbenos a
+        <a href="mailto:contact@wilkcraft.work">contact@wilkcraft.work</a> con
+        tu número de pedido y una foto. Nuestro compromiso es reimprimirla o
+        resolverlo contigo.
+      </p>
+
+      <h2>10. Pedidos a medida</h2>
+      <ul>
+        <li>
+          El presupuesto es gratuito y sin compromiso. Te indicaremos por email
+          el precio y el plazo de entrega. El pedido se inicia cuando lo aceptas
+          y realizas el pago.
+        </li>
+        <li>
+          Declaras que tienes derecho a usar los archivos que nos envías y que
+          su fabricación no infringe derechos de terceros. No fabricamos objetos
+          de uso ilícito ni armas.
+        </li>
+        <li>
+          Imprimimos tu archivo tal como lo recibimos. Las tolerancias
+          dimensionales habituales de la impresión 3D pueden afectar al encaje
+          entre piezas, y no nos responsabilizamos de errores de diseño del
+          archivo.
+        </li>
+        <li>
+          Salvo que se acuerde otra cosa por escrito, las piezas no están
+          diseñadas ni garantizadas para usos críticos de seguridad.
+        </li>
+      </ul>
+
+      <h2>11. Atención al cliente y reclamaciones</h2>
+      <p>
+        Para cualquier duda, incidencia o reclamación escríbenos a
+        <a href="mailto:contact@wilkcraft.work">contact@wilkcraft.work</a>. Si
+        no quedas satisfecho con nuestra respuesta, puedes acudir a los
+        organismos de consumo de tu comunidad autónoma.
+      </p>
+
+      <h2>12. Legislación aplicable</h2>
+      <p>
+        Estas condiciones se rigen por la legislación española, en particular
+        por el Real Decreto Legislativo 1/2007 (Ley General para la Defensa de
+        los Consumidores y Usuarios) y la LSSI-CE. Si eres consumidor, serán
+        competentes los tribunales que correspondan según la normativa de
+        consumo.
+      </p>
+
+      <h2>Anexo. Modelo de formulario de desistimiento</h2>
+      <div class="box">
+        <p>
+          (Rellena y envía este formulario solo si deseas desistir del
+          contrato.)
+        </p>
+        <p>
+          A la atención de
+          <mark class="pend">[Completa: nombre y apellidos o razón social]</mark
+          >, contact@wilkcraft.work:
+        </p>
+        <p>
+          Por la presente le comunico que desisto de mi contrato de venta del
+          siguiente producto:
+        </p>
+        <p>Pedido realizado el / recibido el: ____________________</p>
+        <p>Producto: ____________________</p>
+        <p>Nombre del consumidor: ____________________</p>
+        <p>Domicilio del consumidor: ____________________</p>
+        <p>Fecha: ____________________</p>
+      </div>
+    </main>
+    <footer class="bg-dark text-bg/70 text-sm">
+      <div
+        class="max-w-3xl mx-auto px-4 py-8 flex flex-wrap gap-x-6 gap-y-2 justify-center"
+      >
+        <a href="/legal-notice.html">Aviso legal</a>
+        <a href="/privacy.html">Privacidad</a>
+        <a href="/conditions.html">Condiciones de compra</a>
+        <a href="/">Tienda</a>
+      </div>
+      <p class="text-center text-bg/50 pb-6">© 2026 Capalab</p>
+    </footer>
+  </body>
+</html>

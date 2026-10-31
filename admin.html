@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Capalab | Panel de administración</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              bg: "#FAFAF7",
+              surf: "#F1EFE9",
+              line: "#E3E0D8",
+              ink: "#16181D",
+              mute: "#5F646C",
+              dark: "#1B1F27",
+              acc: "#C2410C",
+              acch: "#9A3412",
+              accb: "#F97316",
+              ok: "#1F9D55",
+              err: "#C0392B",
+            },
+            fontFamily: {
+              head: ["Space Grotesk", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      svg {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      :focus-visible {
+        outline: 3px solid #f97316;
+        outline-offset: 2px;
+      }
+      details > summary {
+        list-style: none;
+        cursor: pointer;
+      }
+      details > summary::-webkit-details-marker {
+        display: none;
+      }
+      .sheet {
+        animation: rise 0.25s ease;
+      }
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes shrink {
+        from {
+          width: 100%;
+        }
+        to {
+          width: 0;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-bg text-ink font-body antialiased">
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="i-layers" viewBox="0 0 24 24">
+        <path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5" />
+      </symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24">
+        <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" />
+        <path d="M9 12l2 2 4-4" />
+      </symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24">
+        <rect x="5" y="11" width="14" height="10" rx="2" />
+        <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+      </symbol>
+      <symbol id="i-box" viewBox="0 0 24 24">
+        <path d="M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10" />
+      </symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24">
+        <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6" />
+      </symbol>
+      <symbol id="i-download" viewBox="0 0 24 24">
+        <path d="M12 4v12M7 11l5 5 5-5M4 20h16" />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </symbol>
+    </svg>
+
+    <!-- Comprobando permisos -->
+    <div id="gate" class="min-h-screen flex items-center justify-center">
+      <div
+        class="w-12 h-12 rounded-full border-4 border-line border-t-accb animate-spin"
+        role="status"
+        aria-label="Comprobando acceso"
+      ></div>
+    </div>
+
+    <!-- Acceso no permitido -->
+    <div
+      id="denied"
+      class="hidden min-h-screen items-center justify-center p-4 bg-surf"
+    >
+      <div
+        class="sheet bg-bg border border-line rounded-2xl p-8 max-w-sm w-full text-center"
+        role="alert"
+      >
+        <div
+          class="w-14 h-14 rounded-full bg-err/10 text-err flex items-center justify-center mx-auto mb-4"
+        >
+          <svg class="w-7 h-7" aria-hidden="true"><use href="#i-lock" /></svg>
+        </div>
+        <h1 class="font-head font-bold text-2xl mb-2">Acceso no permitido</h1>
+        <p class="text-mute">
+          Necesitas una cuenta de administrador para ver esta página.
+        </p>
+        <p class="mt-4 text-sm">
+          Volviendo a la tienda en
+          <b id="count" class="font-head text-lg text-acc">10</b> s
+        </p>
+        <div class="h-1.5 bg-line rounded-full overflow-hidden mt-3">
+          <div
+            class="h-full bg-accb"
+            style="animation: shrink 10s linear forwards"
+          ></div>
+        </div>
+        <a
+          href="/"
+          class="mt-6 bg-acc hover:bg-acch text-white font-semibold min-h-[52px] rounded-xl flex items-center justify-center transition"
+          >Volver a la tienda</a
+        >
+      </div>
+    </div>
+
+    <!-- Panel -->
+    <div id="panel" class="hidden">
+      <header class="bg-dark text-bg">
+        <div
+          class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center"
+        >
+          <span
+            class="font-head font-bold text-xl flex items-center gap-2 tracking-tight"
+          >
+            <svg class="w-6 h-6 text-accb" aria-hidden="true">
+              <use href="#i-layers" /></svg
+            >Capalab
+            <span
+              class="text-xs bg-acc text-white rounded-full px-2 py-0.5 font-body font-medium"
+              >Admin</span
+            >
+          </span>
+          <div class="flex items-center gap-4 text-sm">
+            <span id="me" class="hidden sm:inline text-bg/60"></span>
+            <a
+              href="/"
+              class="underline underline-offset-4 min-h-[44px] flex items-center"
+              >Ir a la tienda</a
+            >
+          </div>
+        </div>
+      </header>
+      <nav
+        class="bg-bg/95 backdrop-blur border-b border-line sticky top-0 z-40"
+      >
+        <div
+          id="tabs"
+          class="max-w-6xl mx-auto px-4 flex gap-6 overflow-x-auto text-sm font-medium"
+        ></div>
+      </nav>
+      <main id="view" class="max-w-6xl mx-auto px-4 py-8"></main>
+    </div>
+
+    <!-- Modal -->
+    <div
+      id="modal"
+      class="fixed inset-0 z-[80] hidden bg-black/50 flex items-end md:items-center justify-center"
+      onclick="if (event.target === this) closeModal();"
+    >
+      <div
+        id="modal-body"
+        class="sheet bg-bg w-full max-w-lg rounded-t-2xl md:rounded-2xl max-h-[92vh] overflow-y-auto p-6"
+        role="dialog"
+        aria-modal="true"
+      ></div>
+    </div>
+
+    <div
+      id="toast"
+      class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-dark text-white px-5 py-3 rounded-xl shadow-lg opacity-0 pointer-events-none z-[300]"
+      role="status"
+    ></div>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+      const esc = (s) =>
+        String(s ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      const eur = (n) =>
+        n.toLocaleString("es-ES", { style: "currency", currency: "EUR" });
+      const dt = (s) => {
+        const d = new Date(s.includes("T") ? s : s.replace(" ", "T") + "Z");
+        return d.toLocaleString("es-ES", {
+          day: "numeric",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      };
+      const token = localStorage.getItem("token");
+      let me = null;
+
+      const INP =
+        "w-full border border-line rounded-xl px-3 min-h-[48px] bg-white";
+      const BTN =
+        "bg-acc hover:bg-acch text-white font-semibold min-h-[48px] px-5 rounded-xl transition";
+
+      const ST = {
+        pending: ["Pendiente de pago", "bg-surf text-mute"],
+        paid: ["Pagado", "bg-ok/10 text-ok"],
+        printing: ["Imprimiendo", "bg-acc/10 text-acc"],
+        shipped: ["Enviado", "bg-dark text-bg"],
+        delivered: ["Entregado", "bg-ok text-white"],
+        cancelled: ["Cancelado", "bg-err/10 text-err"],
+      };
+
+      function toast(msg, error) {
+        const t = $("toast");
+        t.textContent = msg;
+        t.classList.toggle("bg-err", !!error);
+        t.classList.toggle("bg-dark", !error);
+        t.classList.remove("opacity-0");
+        setTimeout(() => t.classList.add("opacity-0"), 2400);
+      }
+
+      async function api(path, opt = {}) {
+        const r = await fetch("/api/admin" + path, {
+          ...opt,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        });
+        if (r.status === 401 || r.status === 403) {
+          location.reload();
+          throw new Error("Sin permiso");
+        }
+        if (opt.raw) return r;
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(d.error || "Error del servidor");
+        return d;
+      }
+
+      /* ---------- Acceso denegado ---------- */
+      function deny() {
+        $("gate").classList.add("hidden");
+        $("denied").classList.remove("hidden");
+        $("denied").classList.add("flex");
+        let n = 10;
+        const t = setInterval(() => {
+          n--;
+          $("count").textContent = Math.max(n, 0);
+          if (n <= 0) {
+            clearInterval(t);
+            location.href = "/";
+          }
+        }, 1000);
+      }
+
+      /* ---------- Pestañas ---------- */
+      const TABS = {
+        orders: ["Pedidos", viewOrders],
+        products: ["Productos", viewProducts],
+        requests: ["A medida", viewRequests],
+        users: ["Usuarios", viewUsers],
+      };
+      function buildTabs() {
+        $("tabs").innerHTML = Object.entries(TABS)
+          .map(
+            ([k, v]) =>
+              `<button data-tab="${k}" onclick="go('${k}')" class="min-h-[52px] border-b-2 border-transparent whitespace-nowrap">${v[0]}</button>`,
+          )
+          .join("");
+      }
+      async function go(t) {
+        document.querySelectorAll("[data-tab]").forEach((b) => {
+          const on = b.dataset.tab === t;
+          b.classList.toggle("border-acc", on);
+          b.classList.toggle("text-ink", on);
+          b.classList.toggle("text-mute", !on);
+        });
+        $("view").innerHTML =
+          '<p class="text-mute text-center py-16">Cargando…</p>';
+        try {
+          await TABS[t][1]();
+        } catch (e) {
+          $("view").innerHTML =
+            `<p class="text-err text-center py-16">${esc(e.message)}</p>`;
+        }
+      }
+      const h2 = (t) =>
+        `<h2 class="font-head font-bold text-2xl md:text-3xl">${t}</h2>`;
+
+      /* ---------- Pedidos ---------- */
+      let ORDERS = [],
+        ofilter = "all";
+
+      async function viewOrders() {
+        ORDERS = await api("/orders");
+        const ok = ORDERS.filter((o) =>
+          ["paid", "printing", "shipped", "delivered"].includes(o.status),
+        );
+        const todo = ORDERS.filter((o) =>
+          ["paid", "printing"].includes(o.status),
+        ).length;
+        const rev = ok.reduce((s, o) => s + o.total, 0) / 100;
+        const card = (label, val) =>
+          `<div class="bg-surf rounded-2xl p-4"><p class="text-sm text-mute">${label}</p><p class="font-head font-bold text-2xl mt-1">${val}</p></div>`;
+        $("view").innerHTML = `
+          <div class="flex flex-wrap justify-between items-center gap-3 mb-6">
+            ${h2("Pedidos")}
+            <select id="ofilter" onchange="ofilter=this.value;drawOrders()" class="border border-line rounded-xl px-3 min-h-[44px] bg-white text-sm">
+              <option value="all">Todos los estados</option>
+              ${Object.entries(ST)
+                .map(([k, v]) => `<option value="${k}">${v[0]}</option>`)
+                .join("")}
+            </select>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            ${card("Pedidos", ORDERS.length)}
+            ${card("Por preparar", todo)}
+            ${card("Cobrado", eur(rev))}
+            ${card("Ticket medio", eur(ok.length ? rev / ok.length : 0))}
+          </div>
+          <div id="olist" class="space-y-3"></div>`;
+        $("ofilter").value = ofilter;
+        drawOrders();
+      }
+
+      function drawOrders() {
+        const list = ORDERS.filter(
+          (o) => ofilter === "all" || o.status === ofilter,
+        );
+        $("olist").innerHTML = list.length
+          ? list.map(orderCard).join("")
+          : '<p class="text-mute text-center py-12">No hay pedidos con este filtro.</p>';
+      }
+
+      function orderCard(o) {
+        const c = o.customer;
+        const [lbl, cls] = ST[o.status] || [o.status, "bg-surf text-mute"];
+        return `<details class="bg-white border border-line rounded-2xl">
+          <summary class="p-4 flex flex-wrap items-center gap-x-4 gap-y-1 min-h-[56px]">
+            <span class="font-head font-bold">${esc(o.number)}</span>
+            <span class="text-sm text-mute">${dt(o.created_at)}</span>
+            <span class="flex-1 min-w-[8rem] truncate">${esc(c.name)}</span>
+            <span class="font-semibold">${eur(o.total / 100)}</span>
+            <span class="text-xs font-medium rounded-full px-3 py-1 ${cls}">${lbl}</span>
+          </summary>
+          <div class="px-4 pb-4 pt-4 grid md:grid-cols-2 gap-4 text-sm border-t border-line">
+            <div>
+              <p class="font-semibold mb-1">Productos</p>
+              ${o.items
+                .map(
+                  (l) =>
+                    `<p>${l.qty} × ${esc(l.name)} <span class="text-mute">(${esc(l.material)}, ${esc(l.color)})</span> — ${eur(l.line / 100)}</p>`,
+                )
+                .join("")}
+              <p class="text-mute mt-2">Subtotal ${eur(o.subtotal / 100)} · Envío ${o.shipping ? eur(o.shipping / 100) : "gratis"}</p>
+            </div>
+            <div>
+              <p class="font-semibold mb-1">Cliente y envío</p>
+              <p>${esc(c.name)}</p>
+              <p><a class="underline" href="mailto:${esc(c.email)}">${esc(c.email)}</a>${c.phone ? " · " + esc(c.phone) : ""}</p>
+              <p>${esc(c.address)}, ${esc(c.postal)} ${esc(c.city)} (${esc(c.province)})</p>
+              <p class="text-xs text-mute mt-2 break-all">${esc(o.payment_intent)}</p>
+            </div>
+            <label class="md:col-span-2 flex items-center gap-3 font-semibold">Estado
+              <select onchange="setStatus(${o.id}, this.value)" class="border border-line rounded-xl px-3 min-h-[44px] bg-white font-normal">
+                ${Object.entries(ST)
+                  .map(
+                    ([k, v]) =>
+                      `<option value="${k}" ${k === o.status ? "selected" : ""}>${v[0]}</option>`,
+                  )
+                  .join("")}
+              </select>
+            </label>
+          </div>
+        </details>`;
+      }
+
+      async function setStatus(id, status) {
+        try {
+          await api("/orders/" + id, {
+            method: "PATCH",
+            body: JSON.stringify({ status }),
+          });
+          const o = ORDERS.find((x) => x.id === id);
+          if (o) o.status = status;
+          toast("Estado actualizado");
+        } catch (e) {
+          toast(e.message, true);
+        }
+      }
+
+      /* ---------- Productos ---------- */
+      let PRODS = [],
+        CATS = [];
+      const catName = (id) => CATS.find((c) => c.id === id)?.name || id;
+
+      async function viewProducts() {
+        const d = await (await fetch("/api/products")).json();
+        PRODS = d.products;
+        CATS = d.config.categories;
+        $("view").innerHTML = `
+          <div class="flex justify-between items-center gap-3 mb-6">
+            ${h2("Productos")}
+            <button onclick="editProduct()" class="${BTN}">Nuevo producto</button>
+          </div>
+          <div class="space-y-3">${PRODS.map(
+            (p) => `
+            <div class="bg-white border border-line rounded-2xl p-3 flex items-center gap-3">
+              <div class="w-14 h-14 rounded-xl bg-surf overflow-hidden shrink-0 flex items-center justify-center text-acc">
+                ${p.img ? `<img src="${esc(p.img)}" alt="" class="w-full h-full object-cover">` : '<svg class="w-7 h-7" aria-hidden="true"><use href="#i-box"/></svg>'}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-semibold truncate">${esc(p.name)}</p>
+                <p class="text-sm text-mute">${esc(catName(p.category))} · ${eur(p.price)}${p.tag ? " · " + esc(p.tag) : ""}</p>
+              </div>
+              <button onclick="editProduct(${p.id})" class="min-h-[44px] px-4 border-2 border-dark rounded-xl text-sm font-semibold hover:bg-dark hover:text-white transition">Editar</button>
+              <button onclick="delProduct(${p.id})" class="w-11 h-11 flex items-center justify-center text-mute hover:text-err" aria-label="Eliminar"><svg class="w-5 h-5" aria-hidden="true"><use href="#i-trash"/></svg></button>
+            </div>`,
+          ).join("")}</div>`;
+      }
+
+      function editProduct(id) {
+        const p = PRODS.find((x) => x.id === id) || {
+          name: "",
+          category: CATS[0]?.id,
+          price: "",
+          tag: "",
+          img: "",
+          benefit: "",
+          materials: [
+            { id: "pla", label: "PLA", extra: 0 },
+            { id: "petg", label: "PETG", extra: 2 },
+          ],
+          colors: [{ name: "Negro", hex: "#1B1F27" }],
+          specs: {},
+        };
+        const lab = (t, inner, hint) =>
+          `<label class="block text-sm font-semibold">${t}${inner}${hint ? `<span class="block text-xs font-normal text-mute mt-1">${hint}</span>` : ""}</label>`;
+        $("modal-body").innerHTML = `
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-head font-bold text-xl">${id ? "Editar producto" : "Nuevo producto"}</h3>
+            <button onclick="closeModal()" class="w-11 h-11 flex items-center justify-center" aria-label="Cerrar"><svg class="w-5 h-5" aria-hidden="true"><use href="#i-close"/></svg></button>
+          </div>
+          <form id="pform" class="space-y-3" data-id="${id || ""}" onsubmit="saveProduct(event)">
+            ${lab("Nombre", `<input name="name" required value="${esc(p.name)}" class="${INP} mt-1 font-normal">`)}
+            <div class="grid grid-cols-2 gap-3">
+              ${lab("Categoría", `<select name="category" class="${INP} mt-1 font-normal">${CATS.map((c) => `<option value="${esc(c.id)}" ${c.id === p.category ? "selected" : ""}>${esc(c.name)}</option>`).join("")}</select>`)}
+              ${lab("Precio base (€)", `<input name="price" inputmode="decimal" required value="${esc(p.price)}" class="${INP} mt-1 font-normal">`)}
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              ${lab("Etiqueta", `<input name="tag" value="${esc(p.tag)}" placeholder="Nuevo, Más vendido…" class="${INP} mt-1 font-normal">`)}
+              ${lab("Imagen", `<input name="img" value="${esc(p.img)}" placeholder="/img/producto.jpg" class="${INP} mt-1 font-normal">`)}
+            </div>
+            ${lab("Descripción corta", `<input name="benefit" value="${esc(p.benefit)}" class="${INP} mt-1 font-normal">`)}
+            ${lab("Materiales", `<textarea name="materials" rows="3" class="${INP} py-2 mt-1 font-normal">${esc(p.materials.map((m) => `${m.id} | ${m.label} | ${m.extra}`).join("\n"))}</textarea>`, "Uno por línea: id | etiqueta | extra en €")}
+            ${lab("Colores", `<textarea name="colors" rows="3" class="${INP} py-2 mt-1 font-normal">${esc(p.colors.map((c) => `${c.name} | ${c.hex}`).join("\n"))}</textarea>`, "Uno por línea: nombre | #RRGGBB")}
+            ${lab(
+              "Especificaciones",
+              `<textarea name="specs" rows="3" class="${INP} py-2 mt-1 font-normal">${esc(
+                Object.entries(p.specs || {})
+                  .map(([k, v]) => `${k}: ${v}`)
+                  .join("\n"),
+              )}</textarea>`,
+              "Una por línea: clave: valor",
+            )}
+            <p id="pmsg" class="text-err text-sm text-center" role="alert"></p>
+            <button class="w-full ${BTN} min-h-[52px]">Guardar</button>
+          </form>`;
+        $("modal").classList.remove("hidden");
+      }
+
+      function closeModal() {
+        $("modal").classList.add("hidden");
+      }
+
+      const lines = (t) =>
+        t
+          .split("\n")
+          .map((l) => l.trim())
+          .filter(Boolean);
+      const num = (v) => Number(String(v ?? "0").replace(",", "."));
+
+      async function saveProduct(e) {
+        e.preventDefault();
+        const f = e.target,
+          id = f.dataset.id,
+          g = (n) => f.elements[n].value;
+        const body = {
+          name: g("name"),
+          category: g("category"),
+          price: num(g("price")),
+          tag: g("tag"),
+          img: g("img"),
+          benefit: g("benefit"),
+          materials: lines(g("materials")).map((l) => {
+            const [i, label, extra] = l.split("|").map((x) => x.trim());
+            return { id: i, label, extra: num(extra) };
+          }),
+          colors: lines(g("colors")).map((l) => {
+            const [name, hex] = l.split("|").map((x) => x.trim());
+            return { name, hex };
+          }),
+          specs: Object.fromEntries(
+            lines(g("specs"))
+              .map((l) => {
+                const i = l.indexOf(":");
+                return [l.slice(0, i).trim(), l.slice(i + 1).trim()];
+              })
+              .filter(([k, v]) => k && v),
+          ),
+        };
+        try {
+          await api(id ? "/products/" + id : "/products", {
+            method: id ? "PUT" : "POST",
+            body: JSON.stringify(body),
+          });
+          closeModal();
+          toast("Producto guardado");
+          viewProducts();
+        } catch (err) {
+          $("pmsg").textContent = err.message;
+        }
+      }
+
+      async function delProduct(id) {
+        const p = PRODS.find((x) => x.id === id);
+        if (!confirm(`¿Eliminar "${p.name}" del catálogo?`)) return;
+        try {
+          await api("/products/" + id, { method: "DELETE" });
+          toast("Producto eliminado");
+          viewProducts();
+        } catch (e) {
+          toast(e.message, true);
+        }
+      }
+
+      /* ---------- Pedidos a medida ---------- */
+      let REQS = [];
+      async function viewRequests() {
+        REQS = await api("/requests");
+        $("view").innerHTML =
+          `<div class="mb-6">${h2("Pedidos a medida")}</div>` +
+          (REQS.length
+            ? `<div class="space-y-3">${REQS.map(
+                (r, i) => `
+            <div class="bg-white border border-line rounded-2xl p-4 text-sm">
+              <div class="flex flex-wrap justify-between gap-2 mb-2">
+                <p class="font-semibold">${esc(r.name || "(sin nombre)")} · <a class="underline font-normal" href="mailto:${esc(r.email)}">${esc(r.email)}</a></p>
+                <span class="text-mute">${dt(r.date)}</span>
+              </div>
+              <p class="text-mute mb-2">${esc(r.material || "-")} · ${esc(r.color || "sin color")} · ${r.quantity} ud.</p>
+              <p class="whitespace-pre-wrap">${esc(r.description || "(sin descripción)")}</p>
+              ${r.file ? `<button onclick="dl(${i})" class="mt-3 min-h-[44px] px-4 border-2 border-dark rounded-xl font-semibold flex items-center gap-2 hover:bg-dark hover:text-white transition"><svg class="w-5 h-5" aria-hidden="true"><use href="#i-download"/></svg>${esc(r.originalName || "Descargar archivo")}</button>` : ""}
+            </div>`,
+              ).join("")}</div>`
+            : '<p class="text-mute text-center py-12">Todavía no hay solicitudes.</p>');
+      }
+
+      async function dl(i) {
+        const r = REQS[i];
+        try {
+          const res = await api(
+            "/requests/" + encodeURIComponent(r.file) + "/download",
+            { raw: true },
+          );
+          if (!res.ok) throw new Error("No se pudo descargar");
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(await res.blob());
+          a.download = r.originalName || r.file;
+          a.click();
+          URL.revokeObjectURL(a.href);
+        } catch (e) {
+          toast(e.message, true);
+        }
+      }
+
+      /* ---------- Usuarios ---------- */
+      async function viewUsers() {
+        const users = await api("/users");
+        $("view").innerHTML = `<div class="mb-6">${h2("Usuarios")}</div>
+          <div class="space-y-3">${users
+            .map(
+              (u) => `
+            <div class="bg-white border border-line rounded-2xl p-4 flex items-center gap-3">
+              <div class="flex-1 min-w-0">
+                <p class="font-semibold truncate">${esc(u.email)}</p>
+                <p class="text-xs text-mute">Registrado el ${dt(u.created_at)}</p>
+              </div>
+              <label class="flex items-center gap-2 text-sm font-medium min-h-[44px]">
+                <input type="checkbox" class="w-5 h-5 accent-acc" ${u.is_admin ? "checked" : ""} ${u.email === me.email ? "disabled" : ""} onchange="setAdmin(${u.id}, this)">
+                Admin
+              </label>
+            </div>`,
+            )
+            .join("")}</div>`;
+      }
+
+      async function setAdmin(id, box) {
+        try {
+          await api("/users/" + id, {
+            method: "PATCH",
+            body: JSON.stringify({ isAdmin: box.checked }),
+          });
+          toast(
+            box.checked ? "Ahora es administrador" : "Ya no es administrador",
+          );
+        } catch (e) {
+          box.checked = !box.checked;
+          toast(e.message, true);
+        }
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeModal();
+      });
+
+      /* ---------- Arranque ---------- */
+      (async () => {
+        if (!token) return deny();
+        try {
+          const r = await fetch("/api/me", {
+            headers: { Authorization: token },
+          });
+          const d = await r.json();
+          if (!r.ok || !d.isAdmin) return deny();
+          me = d;
+        } catch {
+          return deny();
+        }
+        $("gate").classList.add("hidden");
+        $("panel").classList.remove("hidden");
+        $("me").textContent = me.email;
+        buildTabs();
+        go("orders");
+      })();
+    </script>
+  </body>
+</html>

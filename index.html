@@ -1,83 +1,110 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WilkShop | Online Store</title>
-
-    <!-- Google Fonts -->
+    <title>Capalab | Impresión 3D hecha en taller</title>
+    <meta
+      name="description"
+      content="Piezas impresas en 3D en nuestro taller y pedidos a medida. Envío a toda España peninsular."
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              bg: "#FAFAF7",
+              surf: "#F1EFE9",
+              line: "#E3E0D8",
+              ink: "#16181D",
+              mute: "#5F646C",
+              dark: "#1B1F27",
+              acc: "#C2410C",
+              acch: "#9A3412",
+              accb: "#F97316",
+              ok: "#1F9D55",
+              err: "#C0392B",
+            },
+            fontFamily: {
+              head: ["Space Grotesk", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
     <style>
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 72px;
+      }
       body {
         font-family: "Inter", sans-serif;
       }
-
-      .cart-sidebar {
+      svg {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      :focus-visible {
+        outline: 3px solid #f97316;
+        outline-offset: 2px;
+      }
+      .sidebar {
         transition: transform 0.3s ease-in-out;
       }
-
-      @keyframes bounceCart {
-        0% {
-          transform: scale(1);
+      .sheet {
+        animation: rise 0.25s ease;
+      }
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
         }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes bounceCart {
         30% {
           transform: scale(1.3);
         }
         60% {
           transform: scale(0.9);
         }
-        100% {
-          transform: scale(1);
-        }
       }
-
       .cart-bounce {
         animation: bounceCart 0.4s ease;
       }
-
-      @keyframes fadeSlide {
-        0% {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0);
-        }
+      details > summary {
+        list-style: none;
+        cursor: pointer;
       }
-
-      .toast-show {
-        animation: fadeSlide 0.3s ease forwards;
+      details > summary::-webkit-details-marker {
+        display: none;
       }
-
-      #popup,
-      #undo-banner {
-        left: 50% !important;
-        transform: translateX(-50%) !important;
+      details[open] > summary .chev {
+        transform: rotate(180deg);
       }
-
-      #undo-banner {
-        bottom: 2rem;
+      .chev {
+        transition: transform 0.2s;
       }
-
       .wilkcraft-link {
         position: relative;
         color: inherit;
-        text-decoration: none;
-        font-weight: bold;
+        font-weight: 700;
         padding-bottom: 3px;
-        transition: color 0.25s ease;
       }
-
       .wilkcraft-link::after {
         content: "";
         position: absolute;
@@ -85,34 +112,145 @@
         bottom: 0;
         width: 100%;
         height: 2px;
-        background-color: currentColor;
-        transition:
-          background-color 0.25s ease,
-          transform 0.35s ease;
-        transform-origin: center;
+        background: currentColor;
+        transition: transform 0.35s;
       }
-
       .wilkcraft-link:hover::after {
         transform: scaleX(1.2);
       }
+      body.busy,
+      body.busy * {
+        cursor: wait !important;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+          scroll-behavior: auto !important;
+        }
+      }
     </style>
   </head>
+  <body class="bg-bg text-ink font-body antialiased">
+    <!-- Iconos SVG -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="i-cart" viewBox="0 0 24 24">
+        <path d="M3 3h2l2.4 11.2a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L20 7H6" />
+        <circle cx="9" cy="20" r="1.2" />
+        <circle cx="18" cy="20" r="1.2" />
+      </symbol>
+      <symbol id="i-user" viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <path d="M5 13l4 4L19 7" />
+      </symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24">
+        <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" />
+        <path d="M9 12l2 2 4-4" />
+      </symbol>
+      <symbol id="i-truck" viewBox="0 0 24 24">
+        <path d="M2 6h11v10H2zM13 10h4l3 3v3h-7" />
+        <circle cx="6" cy="18" r="1.6" />
+        <circle cx="17" cy="18" r="1.6" />
+      </symbol>
+      <symbol id="i-box" viewBox="0 0 24 24">
+        <path d="M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10" />
+      </symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24">
+        <path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5" />
+      </symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3 2" />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24">
+        <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6" />
+      </symbol>
+      <symbol id="i-home" viewBox="0 0 24 24">
+        <path d="M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6" />
+      </symbol>
+      <symbol id="i-desk" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="12" rx="2" />
+        <path d="M8 20h8M12 16v4" />
+      </symbol>
+      <symbol id="i-gamepad" viewBox="0 0 24 24">
+        <rect x="2" y="7" width="20" height="11" rx="5" />
+        <path d="M7 12h4M9 10v4" />
+        <circle cx="15.5" cy="11" r=".6" />
+        <circle cx="17.5" cy="13.5" r=".6" />
+      </symbol>
+      <symbol id="i-gift" viewBox="0 0 24 24">
+        <rect x="3" y="8" width="18" height="4" rx="1" />
+        <path
+          d="M5 12v9h14v-9M12 8v13M12 8c-2 0-4-1-4-3s3-2 4 3c1-5 4-5 4-3s-2 3-4 3"
+        />
+      </symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24">
+        <path d="M12 16V4M7 9l5-5 5 5M4 20h16" />
+      </symbol>
+      <symbol id="i-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></symbol>
+      <symbol id="i-pick" viewBox="0 0 24 24">
+        <path d="M4 4l6 16 2.5-6.5L19 11z" />
+      </symbol>
+      <symbol id="i-print" viewBox="0 0 24 24">
+        <path d="M5 20h14M8 20V9h8v11M12 9V4M9 4h6" />
+      </symbol>
+    </svg>
 
-  <body class="bg-gray-50">
-    <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <!-- Barra de anuncio -->
+    <div class="bg-dark text-bg text-sm text-center py-2 px-4">
+      Envío gratis a la España peninsular desde 40 € · Producción propia,
+      entrega en 4-6 días
+    </div>
+
+    <!-- Header -->
+    <nav class="bg-bg/95 backdrop-blur border-b border-line sticky top-0 z-50">
       <div
-        class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center"
+        class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center"
       >
-        <h1 class="text-2xl font-bold tracking-tight">WilkShop</h1>
-
-        <div class="flex items-center gap-4">
-          <button id="user-btn" class="text-sm font-medium">Log in</button>
-
-          <button id="cart-btn" onclick="toggleCart()" class="relative p-2">
-            🛒
+        <a
+          href="#"
+          class="font-head font-bold text-2xl tracking-tight flex items-center gap-2"
+        >
+          <svg class="w-7 h-7 text-acc" aria-hidden="true">
+            <use href="#i-layers" /></svg
+          >Capalab
+        </a>
+        <div class="hidden md:flex gap-8 text-sm font-medium text-mute">
+          <a class="hover:text-ink" href="#catalogo">Catálogo</a>
+          <a class="hover:text-ink" href="#a-medida">A medida</a>
+          <a class="hover:text-ink" href="#como-funciona">Cómo funciona</a>
+          <a class="hover:text-ink" href="#faq">Preguntas</a>
+        </div>
+        <div class="flex items-center gap-1">
+          <a
+            id="admin-btn"
+            href="/admin.html"
+            class="hidden min-h-[44px] px-3 text-sm font-semibold items-center gap-2 text-acc"
+          >
+            <svg class="w-5 h-5" aria-hidden="true">
+              <use href="#i-shield" /></svg
+            ><span class="hidden sm:inline">Admin</span>
+          </a>
+          <button
+            id="user-btn"
+            class="min-h-[44px] px-3 text-sm font-medium flex items-center gap-2"
+          ></button>
+          <button
+            id="cart-btn"
+            onclick="toggleCart()"
+            class="relative w-11 h-11 flex items-center justify-center"
+            aria-label="Abrir carrito"
+          >
+            <svg class="w-6 h-6" aria-hidden="true"><use href="#i-cart" /></svg>
             <span
               id="cart-count"
-              class="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+              class="absolute top-0 right-0 bg-acc text-white text-xs rounded-full h-5 min-w-[20px] px-1 flex items-center justify-center"
               >0</span
             >
           </button>
@@ -120,816 +258,1430 @@
       </div>
     </nav>
 
-    <header class="bg-gray-200 py-20 text-center">
-      <h2 class="text-5xl font-bold mb-4">WilkShop</h2>
-      <p class="text-gray-600 mb-8 text-lg font-medium">
-        Powerful tech at the best price.
-      </p>
-      <button
-        onclick="scrollToProducts()"
-        class="bg-black text-white px-8 py-3 rounded-full hover:bg-gray-800 transition"
+    <!-- Hero -->
+    <header
+      class="max-w-6xl mx-auto px-4 pt-10 pb-12 md:pt-20 md:pb-20 grid md:grid-cols-2 gap-10 items-center"
+    >
+      <div>
+        <h1
+          class="font-head font-bold text-[32px] leading-9 md:text-6xl md:leading-[1.05]"
+        >
+          Diseños que cobran vida, capa a capa.
+        </h1>
+        <p class="mt-5 text-lg text-mute max-w-md">
+          Objetos útiles y originales, impresos en nuestro taller. Y si tienes
+          un archivo STL o una idea, la fabricamos para ti.
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row sm:items-center gap-4">
+          <a
+            href="#catalogo"
+            class="bg-acc hover:bg-acch text-white font-semibold min-h-[52px] px-8 rounded-xl flex items-center justify-center transition"
+            >Ver catálogo</a
+          >
+          <a
+            href="#a-medida"
+            class="min-h-[44px] flex items-center justify-center font-semibold underline underline-offset-4 decoration-accb decoration-2"
+            >Pedir algo a medida</a
+          >
+        </div>
+        <ul class="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-mute">
+          <li class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-ok" aria-hidden="true">
+              <use href="#i-check" /></svg
+            >Impreso pieza a pieza
+          </li>
+          <li class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-ok" aria-hidden="true">
+              <use href="#i-check" /></svg
+            >Pago seguro
+          </li>
+          <li class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-ok" aria-hidden="true">
+              <use href="#i-check" /></svg
+            >Envío con seguimiento
+          </li>
+        </ul>
+      </div>
+      <div
+        class="bg-surf rounded-2xl aspect-[4/3] md:aspect-square flex items-center justify-center p-6"
       >
-        View products
-      </button>
+        <svg
+          id="hero-art"
+          viewBox="0 0 240 280"
+          class="h-full max-h-[420px]"
+          stroke="none"
+          role="img"
+          aria-label="Jarrón impreso en capas"
+        ></svg>
+      </div>
     </header>
 
-    <main id="products" class="max-w-6xl mx-auto px-4 py-12">
+    <!-- Confianza -->
+    <section class="bg-surf border-y border-line">
+      <div
+        class="max-w-6xl mx-auto px-4 py-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm font-medium"
+      >
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 text-acc shrink-0" aria-hidden="true">
+            <use href="#i-print" /></svg
+          >Producción propia
+        </div>
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 text-acc shrink-0" aria-hidden="true">
+            <use href="#i-shield" /></svg
+          >Pago 100 % seguro
+        </div>
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 text-acc shrink-0" aria-hidden="true">
+            <use href="#i-truck" /></svg
+          >Envío con seguimiento
+        </div>
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 text-acc shrink-0" aria-hidden="true">
+            <use href="#i-box" /></svg
+          >Devolución en 14 días
+        </div>
+      </div>
+    </section>
+
+    <!-- Categorías -->
+    <section class="max-w-6xl mx-auto px-4 pt-16">
+      <h2 class="font-head font-bold text-2xl md:text-4xl mb-6">
+        Elige por uso
+      </h2>
+      <div id="categories" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
+    </section>
+
+    <!-- Catálogo -->
+    <main id="catalogo" class="max-w-6xl mx-auto px-4 py-16">
+      <div class="flex items-end justify-between mb-6">
+        <h2 id="catalog-title" class="font-head font-bold text-2xl md:text-4xl">
+          Catálogo
+        </h2>
+        <button
+          id="clear-filter"
+          onclick="setCat('all')"
+          class="hidden min-h-[44px] text-sm font-semibold underline underline-offset-4"
+        >
+          Ver todo
+        </button>
+      </div>
       <div
         id="product-grid"
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+        class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
       ></div>
     </main>
 
-    <div
-      id="cart-overlay"
-      onclick="toggleCart()"
-      class="fixed inset-0 bg-black bg-opacity-50 hidden z-[60]"
-    ></div>
+    <!-- Cómo funciona -->
+    <section id="como-funciona" class="bg-surf">
+      <div class="max-w-6xl mx-auto px-4 py-16">
+        <h2 class="font-head font-bold text-2xl md:text-4xl mb-10">
+          Así se hace tu pedido
+        </h2>
+        <ol class="grid md:grid-cols-3 gap-6">
+          <li class="bg-bg rounded-2xl p-6 border border-line">
+            <svg class="w-8 h-8 text-acc mb-4" aria-hidden="true">
+              <use href="#i-pick" />
+            </svg>
+            <h3 class="font-head font-bold text-lg mb-1">
+              1. Elige o sube tu diseño
+            </h3>
+            <p class="text-mute">
+              Escoge del catálogo o envíanos tu STL y te damos presupuesto
+              gratis.
+            </p>
+          </li>
+          <li class="bg-bg rounded-2xl p-6 border border-line">
+            <svg class="w-8 h-8 text-acc mb-4" aria-hidden="true">
+              <use href="#i-print" />
+            </svg>
+            <h3 class="font-head font-bold text-lg mb-1">2. Lo imprimimos</h3>
+            <p class="text-mute">
+              Con el material y el color que elijas. Revisamos cada pieza antes
+              de embalarla.
+            </p>
+          </li>
+          <li class="bg-bg rounded-2xl p-6 border border-line">
+            <svg class="w-8 h-8 text-acc mb-4" aria-hidden="true">
+              <use href="#i-truck" />
+            </svg>
+            <h3 class="font-head font-bold text-lg mb-1">
+              3. Lo recibes en casa
+            </h3>
+            <p class="text-mute">
+              Entre 4 y 6 días laborables, con seguimiento, a cualquier punto de
+              la España peninsular.
+            </p>
+          </li>
+        </ol>
+      </div>
+    </section>
 
-    <footer class="bg-black text-white mt-20">
-      <div
-        class="border-t border-gray-800 text-center py-6 text-gray-500 text-sm"
+    <!-- Storytelling -->
+    <section
+      id="story"
+      class="max-w-6xl mx-auto px-4 py-16 grid md:grid-cols-2 gap-10 items-center"
+    >
+      <figure
+        id="story-fig"
+        class="rounded-2xl overflow-hidden aspect-[4/3] bg-surf"
       >
-        © 2026 WilkShop · Developed by
+        <img
+          src="/img/taller.jpg"
+          alt="Nuestro taller de impresión 3D"
+          loading="lazy"
+          class="w-full h-full object-cover"
+          onerror="
+            document.getElementById('story-fig').remove();
+            const s = document.getElementById('story');
+            s.classList.remove('md:grid-cols-2', 'max-w-6xl');
+            s.classList.add('max-w-3xl');
+          "
+        />
+      </figure>
+      <div>
+        <h2 class="font-head font-bold text-2xl md:text-4xl mb-4">
+          Hay una persona detrás de cada pieza
+        </h2>
+        <p class="text-mute mb-6">
+          No somos un marketplace. Calibramos, imprimimos y revisamos cada
+          pedido en nuestro taller. Si algo no queda como debe, lo repetimos.
+        </p>
+        <ul class="space-y-3 font-medium">
+          <li class="flex gap-3">
+            <svg class="w-5 h-5 text-acc mt-0.5 shrink-0" aria-hidden="true">
+              <use href="#i-layers" /></svg
+            >Capas de 0,2 mm para un acabado fino
+          </li>
+          <li class="flex gap-3">
+            <svg class="w-5 h-5 text-acc mt-0.5 shrink-0" aria-hidden="true">
+              <use href="#i-shield" /></svg
+            >PLA y PETG, resistentes y con colores reales
+          </li>
+          <li class="flex gap-3">
+            <svg class="w-5 h-5 text-acc mt-0.5 shrink-0" aria-hidden="true">
+              <use href="#i-check" /></svg
+            >Control de calidad en cada pieza
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- A medida -->
+    <section id="a-medida" class="bg-dark text-bg">
+      <div class="max-w-6xl mx-auto px-4 py-16 grid md:grid-cols-2 gap-10">
+        <div>
+          <h2 class="font-head font-bold text-3xl md:text-4xl mb-4">
+            ¿Tienes un diseño o una idea?
+          </h2>
+          <p class="text-bg/70 max-w-md">
+            Sube tu archivo STL, 3MF u OBJ, o cuéntanos qué necesitas. Te
+            respondemos con precio y plazo en menos de 24 h laborables.
+          </p>
+          <p class="text-bg/50 text-sm mt-6 max-w-md">
+            Las piezas a medida se fabrican solo para ti, por eso no admiten
+            devolución salvo defecto. Si llega mal, lo repetimos.
+          </p>
+        </div>
+        <form id="quote-form" class="bg-bg text-ink rounded-2xl p-6 space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <input
+              name="name"
+              placeholder="Nombre"
+              class="col-span-2 sm:col-span-1 border border-line rounded-xl px-3 min-h-[48px]"
+            />
+            <input
+              name="email"
+              type="email"
+              required
+              placeholder="Email"
+              class="col-span-2 sm:col-span-1 border border-line rounded-xl px-3 min-h-[48px]"
+            />
+            <select
+              name="material"
+              class="border border-line rounded-xl px-3 min-h-[48px] bg-white"
+            >
+              <option>PLA</option>
+              <option>PETG</option>
+              <option>No lo sé</option>
+            </select>
+            <input
+              name="color"
+              placeholder="Color"
+              class="border border-line rounded-xl px-3 min-h-[48px]"
+            />
+            <input
+              name="quantity"
+              type="number"
+              min="1"
+              value="1"
+              aria-label="Cantidad"
+              class="border border-line rounded-xl px-3 min-h-[48px]"
+            />
+            <label
+              class="border border-dashed border-line rounded-xl px-3 min-h-[48px] flex items-center gap-2 text-sm text-mute cursor-pointer overflow-hidden"
+            >
+              <svg class="w-5 h-5 shrink-0" aria-hidden="true">
+                <use href="#i-upload" /></svg
+              ><span id="file-name" class="truncate"
+                >Subir STL / 3MF / OBJ</span
+              >
+              <input
+                name="file"
+                type="file"
+                accept=".stl,.3mf,.obj"
+                class="sr-only"
+                onchange="
+                  $('file-name').textContent =
+                    this.files[0]?.name || 'Subir STL / 3MF / OBJ'
+                "
+              />
+            </label>
+          </div>
+          <textarea
+            name="description"
+            rows="3"
+            placeholder="Cuéntanos para qué lo necesitas, medidas, etc."
+            class="w-full border border-line rounded-xl px-3 py-3"
+          ></textarea>
+          <button
+            class="w-full bg-acc hover:bg-acch text-white font-semibold min-h-[52px] rounded-xl transition"
+          >
+            Pedir presupuesto gratis
+          </button>
+          <p id="quote-msg" class="text-sm text-center" role="status"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="max-w-3xl mx-auto px-4 py-16">
+      <h2 class="font-head font-bold text-2xl md:text-4xl mb-6">
+        Preguntas frecuentes
+      </h2>
+      <div
+        class="divide-y divide-line border-y border-line"
+        id="faq-list"
+      ></div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-bg/70 text-sm">
+      <div
+        class="max-w-6xl mx-auto px-4 py-12 grid grid-cols-2 md:grid-cols-4 gap-8"
+      >
+        <div class="col-span-2 md:col-span-1">
+          <p class="font-head font-bold text-xl text-bg mb-2">Capalab</p>
+          <p>Impresión 3D hecha en taller, capa a capa.</p>
+        </div>
+        <div>
+          <p class="font-semibold text-bg mb-3">Tienda</p>
+          <ul class="space-y-2">
+            <li><a href="#catalogo">Catálogo</a></li>
+            <li><a href="#a-medida">Pedido a medida</a></li>
+            <li><a href="#como-funciona">Cómo funciona</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="font-semibold text-bg mb-3">Ayuda</p>
+          <ul class="space-y-2">
+            <li><a href="#faq">Envíos y plazos</a></li>
+            <li><a href="#faq">Devoluciones</a></li>
+            <li><a href="mailto:contact@wilkcraft.work">Contacto</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="font-semibold text-bg mb-3">Legal</p>
+          <ul class="space-y-2">
+            <li><a href="/legal-notice.html">Aviso legal</a></li>
+            <li><a href="/privacy.html">Privacidad</a></li>
+            <li><a href="/conditions.html">Condiciones de compra</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-white/10 text-center py-6 text-bg/50">
+        © 2026 Capalab · Pago con tarjeta, Apple Pay y Google Pay · Desarrollado
+        por
         <a
           target="_blank"
           rel="noopener noreferrer"
           class="wilkcraft-link"
           href="https://www.wilkcraft.work/"
+          >Wilkcraft</a
         >
-          Wilkcraft
-        </a>
       </div>
     </footer>
 
+    <!-- Ficha de producto (PDP) -->
     <div
-      id="toast"
-      class="fixed bottom-6 right-6 bg-black text-white px-6 py-3 rounded-lg shadow-lg opacity-0 pointer-events-none"
-    >
-      Product added to cart 🛒
-    </div>
-
-    <div
-      id="popup"
-      class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-black text-white px-6 py-3 rounded-lg shadow-lg opacity-0 pointer-events-none z-[300] whitespace-nowrap"
-    ></div>
-
-    <div
-      id="account-popup"
-      class="fixed inset-0 bg-black bg-opacity-50 hidden z-[400] flex items-center justify-center"
+      id="pdp"
+      class="fixed inset-0 z-[80] hidden bg-black/50 flex items-end md:items-center justify-center"
+      onclick="if (event.target === this) closePDP();"
     >
       <div
-        class="bg-white p-6 rounded-2xl w-full max-w-xs text-center relative"
+        class="sheet bg-bg w-full max-w-lg rounded-t-2xl md:rounded-2xl max-h-[92vh] flex flex-col"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pdp-title"
       >
-        <button onclick="closeAccountPopup()" class="absolute top-3 right-3">
-          ✕
-        </button>
-
-        <h3 class="text-lg font-bold mb-6">My account</h3>
-
-        <div class="flex flex-col gap-3">
-          <button
-            onclick="logout()"
-            class="bg-gray-900 text-white py-2 rounded-lg hover:bg-gray-800 transition"
-          >
-            Log out
-          </button>
-
-          <button
-            onclick="deleteAccount()"
-            class="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition"
-          >
-            Delete account
-          </button>
-        </div>
+        <div id="pdp-body" class="overflow-y-auto p-5 pb-2"></div>
+        <div
+          id="pdp-foot"
+          class="p-4 border-t border-line bg-bg rounded-b-2xl"
+        ></div>
       </div>
     </div>
 
     <div
-      id="undo-banner"
-      class="fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-black text-white px-6 py-3 rounded-lg shadow-lg opacity-0 pointer-events-none flex items-center gap-4 z-[500] whitespace-nowrap"
+      id="cart-overlay"
+      onclick="toggleCart()"
+      class="fixed inset-0 bg-black/50 hidden z-[60]"
+    ></div>
+
+    <aside
+      id="cart-sidebar"
+      class="sidebar fixed right-0 top-0 h-full w-full max-w-sm bg-bg shadow-xl z-[70] translate-x-full flex flex-col"
+      aria-label="Carrito"
     >
-      <span id="undo-text">Product removed</span>
-      <button onclick="undoRemove()" class="underline font-semibold">
-        Undo
+      <div class="flex justify-between items-center p-5 border-b border-line">
+        <h3 class="font-head font-bold text-xl">Tu carrito</h3>
+        <button
+          onclick="toggleCart()"
+          class="w-11 h-11 flex items-center justify-center"
+          aria-label="Cerrar"
+        >
+          <svg class="w-6 h-6" aria-hidden="true"><use href="#i-close" /></svg>
+        </button>
+      </div>
+      <div id="cart-items" class="flex-1 overflow-y-auto p-5 space-y-4"></div>
+      <div class="p-5 border-t border-line space-y-1 text-sm">
+        <div class="flex justify-between text-mute">
+          <span>Subtotal</span><span id="cart-sub">0,00 €</span>
+        </div>
+        <div class="flex justify-between text-mute">
+          <span>Envío</span><span id="cart-ship">–</span>
+        </div>
+        <p id="ship-hint" class="text-xs text-mute pb-2"></p>
+        <div class="flex justify-between font-bold text-lg mb-3">
+          <span>Total (IVA incl.)</span><span id="cart-total">0,00 €</span>
+        </div>
+        <button
+          onclick="checkout()"
+          class="w-full bg-acc hover:bg-acch text-white font-semibold min-h-[52px] rounded-xl transition"
+        >
+          Finalizar compra
+        </button>
+      </div>
+    </aside>
+
+    <!-- Toasts -->
+    <div
+      id="toast"
+      class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-dark text-white px-5 py-3 rounded-xl shadow-lg opacity-0 pointer-events-none z-[300] flex items-center gap-3 whitespace-nowrap"
+    >
+      <svg class="w-5 h-5 text-ok" aria-hidden="true">
+        <use href="#i-check" /></svg
+      ><span id="toast-text">Añadido al carrito</span>
+    </div>
+    <div
+      id="popup"
+      class="fixed top-6 left-1/2 -translate-x-1/2 bg-dark text-white px-6 py-3 rounded-xl shadow-lg opacity-0 pointer-events-none z-[300] max-w-[90vw] text-center"
+      role="status"
+    ></div>
+    <div
+      id="undo-banner"
+      class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-dark text-white px-5 py-3 rounded-xl shadow-lg opacity-0 pointer-events-none flex items-center gap-4 z-[500]"
+    >
+      <span id="undo-text">Producto eliminado</span>
+      <button
+        onclick="undoRemove()"
+        class="underline font-semibold min-h-[44px]"
+      >
+        Deshacer
       </button>
     </div>
 
+    <!-- Cuenta -->
     <div
-      id="cart-sidebar"
-      class="fixed right-0 top-0 h-full w-80 bg-white shadow-xl z-[70] translate-x-full cart-sidebar p-6"
+      id="account-popup"
+      class="fixed inset-0 bg-black/50 hidden z-[400] flex items-center justify-center p-4"
     >
-      <div class="flex justify-between items-center mb-8">
-        <h3 class="text-xl font-bold">Your Cart</h3>
-        <button onclick="toggleCart()" class="text-gray-500 text-2xl">✕</button>
-      </div>
-
-      <div
-        id="cart-items"
-        class="space-y-4 max-h-[65vh] overflow-y-auto pr-2"
-      ></div>
-
-      <div class="absolute bottom-0 left-0 w-full p-6 border-t bg-white">
-        <div class="flex justify-between font-bold text-lg mb-4">
-          <span>Total:</span>
-          <span id="cart-total">€0.00</span>
-        </div>
-
+      <div class="bg-bg p-6 rounded-2xl w-full max-w-xs text-center relative">
         <button
-          onclick="checkout()"
-          class="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800"
+          onclick="closeAccountPopup()"
+          class="absolute top-2 right-2 w-11 h-11 flex items-center justify-center"
+          aria-label="Cerrar"
         >
-          Checkout
+          <svg class="w-5 h-5" aria-hidden="true"><use href="#i-close" /></svg>
         </button>
-      </div>
-    </div>
-
-    <div
-      id="payment-modal"
-      class="fixed inset-0 bg-black bg-opacity-50 hidden z-[100] flex items-center justify-center"
-    >
-      <div
-        class="bg-white w-full max-w-md rounded-2xl p-8 relative max-h-[90vh] overflow-y-auto"
-      >
-        <button
-          onclick="closePaymentModal()"
-          class="absolute top-4 right-4 text-gray-500 text-xl"
-        >
-          ✕
-        </button>
-
-        <h3 class="text-2xl font-bold mb-6 text-center">Complete Payment</h3>
-
-        <form id="payment-form" class="space-y-6">
-          <div id="payment-element"></div>
-
+        <h3 class="font-head font-bold text-lg mb-6">Mi cuenta</h3>
+        <div class="flex flex-col gap-3">
           <button
-            id="submit-payment"
-            class="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition"
+            onclick="logout()"
+            class="bg-dark text-white min-h-[48px] rounded-xl"
           >
-            Pay now
+            Cerrar sesión
           </button>
-
-          <p id="payment-message" class="text-red-500 text-sm text-center"></p>
-        </form>
+          <button
+            onclick="deleteAccount()"
+            class="bg-err text-white min-h-[48px] rounded-xl"
+          >
+            Eliminar cuenta
+          </button>
+        </div>
       </div>
     </div>
 
     <div
       id="auth-modal"
-      class="fixed inset-0 bg-black bg-opacity-50 hidden z-[200] flex items-center justify-center"
+      class="fixed inset-0 bg-black/50 hidden z-[200] flex items-center justify-center p-4"
     >
-      <div class="bg-white p-8 rounded-2xl w-full max-w-sm relative">
-        <button onclick="closeAuthModal()" class="absolute top-3 right-3">
-          ✕
+      <div class="bg-bg p-8 rounded-2xl w-full max-w-sm relative">
+        <button
+          onclick="closeAuthModal()"
+          class="absolute top-2 right-2 w-11 h-11 flex items-center justify-center"
+          aria-label="Cerrar"
+        >
+          <svg class="w-5 h-5" aria-hidden="true"><use href="#i-close" /></svg>
         </button>
-
-        <h3 id="auth-title" class="text-xl font-bold mb-4 text-center">
-          Login
+        <h3
+          id="auth-title"
+          class="font-head font-bold text-xl mb-4 text-center"
+        >
+          Iniciar sesión
         </h3>
-
         <input
           id="auth-email"
           type="email"
           placeholder="Email"
-          class="w-full mb-3 p-2 border rounded"
+          class="w-full mb-3 px-3 min-h-[48px] border border-line rounded-xl"
         />
-
         <input
           id="auth-password"
           type="password"
-          placeholder="Password"
-          class="w-full mb-4 p-2 border rounded"
+          placeholder="Contraseña (mín. 8 caracteres)"
+          class="w-full mb-4 px-3 min-h-[48px] border border-line rounded-xl"
         />
-
         <button
           onclick="handleAuth()"
-          class="w-full bg-black text-white py-2 rounded mb-3"
+          class="w-full bg-acc hover:bg-acch text-white font-semibold min-h-[48px] rounded-xl mb-3"
         >
-          Continue
+          Continuar
         </button>
-
         <p class="text-center text-sm">
-          <span id="toggle-text">Don't have an account?</span>
-          <button id="toggle-btn" onclick="toggleAuthMode()" class="font-bold">
-            Sign up
+          <span id="toggle-text">¿No tienes cuenta?</span>
+          <button
+            id="toggle-btn"
+            onclick="toggleAuthMode()"
+            class="font-bold underline min-h-[44px]"
+          >
+            Regístrate
           </button>
         </p>
       </div>
     </div>
 
+    <!-- Pago -->
+    <div
+      id="payment-modal"
+      class="fixed inset-0 bg-black/50 hidden z-[100] flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-bg w-full max-w-md rounded-2xl p-6 relative max-h-[92vh] overflow-y-auto"
+      >
+        <button
+          onclick="closePaymentModal()"
+          class="absolute top-2 right-2 w-11 h-11 flex items-center justify-center"
+          aria-label="Cerrar"
+        >
+          <svg class="w-5 h-5" aria-hidden="true"><use href="#i-close" /></svg>
+        </button>
+        <h3
+          id="pay-title"
+          class="font-head font-bold text-2xl mb-6 text-center"
+        >
+          Datos de envío
+        </h3>
+
+        <form id="ship-form" class="space-y-3">
+          <input
+            name="name"
+            autocomplete="name"
+            required
+            placeholder="Nombre y apellidos"
+            class="w-full border border-line rounded-xl px-3 min-h-[48px] bg-white"
+          />
+          <div class="grid grid-cols-2 gap-3">
+            <input
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              placeholder="Email"
+              class="col-span-2 sm:col-span-1 w-full border border-line rounded-xl px-3 min-h-[48px] bg-white"
+            />
+            <input
+              name="phone"
+              type="tel"
+              autocomplete="tel"
+              placeholder="Teléfono (opcional)"
+              class="col-span-2 sm:col-span-1 w-full border border-line rounded-xl px-3 min-h-[48px] bg-white"
+            />
+          </div>
+          <input
+            name="address"
+            autocomplete="street-address"
+            required
+            placeholder="Dirección (calle, número, piso)"
+            class="w-full border border-line rounded-xl px-3 min-h-[48px] bg-white"
+          />
+          <div class="grid grid-cols-3 gap-3">
+            <input
+              name="postal"
+              inputmode="numeric"
+              maxlength="5"
+              autocomplete="postal-code"
+              required
+              placeholder="C. postal"
+              class="col-span-1 w-full border border-line rounded-xl px-3 min-h-[48px] bg-white"
+            />
+            <input
+              name="city"
+              autocomplete="address-level2"
+              required
+              placeholder="Localidad"
+              class="col-span-2 w-full border border-line rounded-xl px-3 min-h-[48px] bg-white"
+            />
+          </div>
+          <input
+            name="province"
+            autocomplete="address-level1"
+            required
+            placeholder="Provincia"
+            class="w-full border border-line rounded-xl px-3 min-h-[48px] bg-white"
+          />
+          <label class="flex gap-3 items-start text-sm text-mute pt-1">
+            <input
+              type="checkbox"
+              name="accept"
+              required
+              class="mt-1 w-5 h-5 accent-acc shrink-0"
+            />
+            <span
+              >He leído y acepto las
+              <a href="/conditions.html" target="_blank" class="underline"
+                >Condiciones de compra</a
+              >
+              y la
+              <a href="/privacy.html" target="_blank" class="underline"
+                >Política de privacidad</a
+              >.</span
+            >
+          </label>
+          <p
+            id="ship-message"
+            class="text-err text-sm text-center"
+            role="alert"
+          ></p>
+          <button
+            id="ship-submit"
+            class="w-full bg-acc hover:bg-acch text-white font-semibold min-h-[52px] rounded-xl transition"
+          >
+            Continuar al pago
+          </button>
+          <p class="text-xs text-mute text-center">
+            Enviamos solo a la España peninsular (no a Canarias, Ceuta, Melilla
+            ni Baleares). Te mandaremos la confirmación por email.
+          </p>
+        </form>
+
+        <form id="payment-form" class="hidden space-y-6">
+          <div
+            class="bg-surf rounded-xl p-3 text-sm flex justify-between items-center gap-3"
+          >
+            <span id="ship-summary" class="text-mute"></span>
+            <button
+              type="button"
+              onclick="showShipStep()"
+              class="underline font-semibold shrink-0 min-h-[44px]"
+            >
+              Editar
+            </button>
+          </div>
+          <div id="payment-element"></div>
+          <button
+            id="submit-payment"
+            class="w-full bg-acc hover:bg-acch text-white font-semibold min-h-[52px] rounded-xl transition"
+          >
+            Pagar ahora
+          </button>
+          <p
+            id="payment-message"
+            class="text-err text-sm text-center"
+            role="alert"
+          ></p>
+        </form>
+
+        <div
+          id="payment-done"
+          class="hidden flex-col items-center text-center py-6"
+        >
+          <div
+            class="w-14 h-14 flex items-center justify-center rounded-full bg-ok/10 mb-4"
+          >
+            <svg class="w-7 h-7 text-ok" stroke-width="3" aria-hidden="true">
+              <use href="#i-check" />
+            </svg>
+          </div>
+          <h4 class="font-head font-bold text-xl mb-1">Pago completado</h4>
+          <p id="done-text" class="text-mute mb-5">
+            Gracias por tu compra en Capalab. Ya estamos con la impresora.
+          </p>
+          <button
+            onclick="closePaymentModal()"
+            class="bg-dark text-white px-6 min-h-[48px] rounded-xl"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="busy"
+      class="fixed inset-0 z-[1000] hidden flex-col items-center justify-center gap-4 bg-black/60 backdrop-blur-sm"
+      role="alert"
+      aria-live="assertive"
+    >
+      <div
+        class="w-14 h-14 rounded-full border-4 border-white/25 border-t-accb animate-spin"
+      ></div>
+      <p id="busy-text" class="text-white font-head font-bold text-lg">
+        Procesando tu pago…
+      </p>
+      <p class="text-white/70 text-sm">No cierres ni recargues esta página</p>
+    </div>
     <script src="https://js.stripe.com/v3/"></script>
     <script>
       const stripe = Stripe(
         "pk_test_51T6bwJ1xTRQyGRaCOGIvgGMV0Mcd810oUAELmmQPnWrTZT65jpSdNJhw6hKl8t2DoihxIaZRfz5IHITtN7IGmvjn00jOlL4Nqi",
       );
 
-      const products = [
-        {
-          id: 1,
-          name: "Gaming Laptop RTX 4060",
-          price: 1299,
-          img: "https://images.unsplash.com/photo-1630794180018-433d915c34ac",
-        },
-        {
-          id: 2,
-          name: "RGB Mechanical Keyboard Pro",
-          price: 89,
-          img: "https://images.unsplash.com/photo-1756694938681-23f28a08fdde",
-        },
-        {
-          id: 3,
-          name: "Gaming Mouse 16000 DPI",
-          price: 49,
-          img: "https://images.unsplash.com/photo-1629429408209-1f912961dbd8",
-        },
-        {
-          id: 4,
-          name: "27'' 144Hz Full HD Monitor",
-          price: 249,
-          img: "https://images.unsplash.com/photo-1674505921901-e54fe119f0a4",
-        },
-        {
-          id: 5,
-          name: "UltraSpeed 1TB NVMe SSD",
-          price: 119,
-          img: "https://images.unsplash.com/photo-1686705562930-4f3e46f620d8",
-        },
-        {
-          id: 6,
-          name: "7.1 Gaming Headset",
-          price: 69,
-          img: "https://images.unsplash.com/photo-1660391532247-4a8ad1060817",
-        },
+      const $ = (id) => document.getElementById(id);
+      const ic = (n, c = "w-5 h-5") =>
+        `<svg class="${c}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+      const eur = (n) =>
+        n.toLocaleString("es-ES", { style: "currency", currency: "EUR" });
+
+      let SHOP = {
+        freeShippingFrom: 40,
+        shippingCost: 4.9,
+        leadDaysMin: 4,
+        leadDaysMax: 6,
+        categories: [],
+      };
+      let PRODUCTS = [];
+      let cat = "all",
+        sel = null;
+      let token = localStorage.getItem("token") || null;
+      let isAdmin = false;
+      let cart = JSON.parse(localStorage.getItem("capalab_cart")) || [];
+      let lastRemoved = null,
+        undoTimeout;
+
+      async function checkAdmin() {
+        isAdmin = false;
+        if (token) {
+          try {
+            const r = await fetch("/api/me", {
+              headers: { Authorization: token },
+            });
+            if (r.status === 401) {
+              token = null;
+              localStorage.removeItem("token");
+            } else if (r.ok) isAdmin = !!(await r.json()).isAdmin;
+          } catch {}
+        }
+        updateUserUI();
+      }
+
+      const P = (id) => PRODUCTS.find((p) => p.id === id);
+      const unit = (it) => {
+        const p = P(it.id);
+        return (
+          p.price + (p.materials.find((m) => m.id === it.material)?.extra || 0)
+        );
+      };
+      const catIcon = (id) =>
+        SHOP.categories.find((c) => c.id === id)?.icon || "layers";
+
+      const FAQ = [
+        [
+          "¿Cuánto tarda mi pedido?",
+          "Entre 4 y 6 días laborables hasta tu puerta. Imprimimos bajo pedido, así que cada pieza se fabrica cuando la compras.",
+        ],
+        [
+          "¿A dónde enviáis?",
+          "A la España peninsular (no enviamos a Canarias, Ceuta, Melilla ni Baleares). El envío es gratis desde 40 € y 4,90 € por debajo de ese importe.",
+        ],
+        [
+          "¿PLA o PETG?",
+          "El PLA es ideal para interior y decoración. El PETG aguanta mejor el calor, los golpes y la humedad.",
+        ],
+        [
+          "¿Puedo devolver un producto?",
+          "Sí, tienes 14 días para devolver los productos de catálogo. Las piezas a medida no admiten devolución salvo defecto de fabricación.",
+        ],
+        [
+          "¿Imprimís mi propio diseño?",
+          "Claro. Sube tu STL en el formulario de pedido a medida y te enviamos presupuesto sin compromiso.",
+        ],
       ];
 
-      let token = localStorage.getItem("token") || null;
-      let cart = JSON.parse(localStorage.getItem("wilkshop_cart")) || [];
-      let lastRemoved = null;
+      /* ---------- Catálogo ---------- */
+      async function loadCatalog() {
+        try {
+          const data = await (await fetch("/api/products")).json();
+          SHOP = data.config;
+          PRODUCTS = data.products;
+        } catch {
+          showPopup("No se pudo cargar el catálogo", "error");
+        }
+      }
+
+      function renderCategories() {
+        $("categories").innerHTML =
+          SHOP.categories
+            .map(
+              (c) => `
+    <button onclick="setCat('${c.id}')" class="bg-surf hover:bg-line border border-line rounded-2xl p-5 text-left min-h-[110px] flex flex-col justify-between transition">
+      ${ic(c.icon, "w-8 h-8 text-acc")}<span class="font-head font-bold text-lg">${c.name}</span>
+    </button>`,
+            )
+            .join("") +
+          `
+    <a href="#a-medida" class="bg-dark text-bg rounded-2xl p-5 min-h-[110px] flex flex-col justify-between col-span-2 md:col-span-1">
+      ${ic("upload", "w-8 h-8 text-accb")}<span class="font-head font-bold text-lg">A medida</span>
+    </a>`;
+      }
+
+      function setCat(id) {
+        cat = id;
+        renderProducts();
+        const c = SHOP.categories.find((x) => x.id === id);
+        $("catalog-title").textContent = c ? c.name : "Catálogo";
+        $("clear-filter").classList.toggle("hidden", id === "all");
+        if (id !== "all") $("catalogo").scrollIntoView();
+      }
+
+      function tile(p, big) {
+        return p.img
+          ? `<img src="${p.img}" alt="${p.name}" loading="lazy" class="w-full h-full object-cover">`
+          : `<div class="w-full h-full flex items-center justify-center bg-surf text-acc">${ic(catIcon(p.category), big ? "w-20 h-20" : "w-12 h-12")}</div>`;
+      }
 
       function renderProducts() {
-        const grid = document.getElementById("product-grid");
-
-        grid.innerHTML = products
+        const list = PRODUCTS.filter(
+          (p) => cat === "all" || p.category === cat,
+        );
+        $("product-grid").innerHTML = list
           .map(
-            (product) => `
-          <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition group">
-            <div class="h-80 bg-gray-100 overflow-hidden">
-              <img src="${product.img}"
-                   class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-            </div>
-            <div class="p-4">
-              <h4 class="font-semibold text-lg">${product.name}</h4>
-              <p class="text-gray-500 mb-4">€${product.price.toFixed(2)}</p>
-
-              <div class="flex gap-2">
-                <input type="number" id="qty-${product.id}" value="1" min="1"
-                  class="w-16 border-2 border-gray-200 rounded-lg px-2 text-center focus:border-black outline-none">
-
-                <button onclick="addToCart(${product.id})"
-                  class="flex-1 border-2 border-black py-2 rounded-lg hover:bg-black hover:text-white transition font-medium">
-                  Add
-                </button>
-              </div>
-            </div>
-          </div>
-        `,
+            (p) => `
+    <article class="bg-white border border-line rounded-2xl overflow-hidden flex flex-col shadow-[0_4px_16px_rgba(22,24,29,.06)]">
+      <button onclick="openPDP(${p.id})" class="relative aspect-square block" aria-label="Ver ${p.name}">
+        ${tile(p)}
+        ${p.tag ? `<span class="absolute top-2 left-2 bg-dark text-bg text-xs font-medium rounded-full px-3 py-1">${p.tag}</span>` : ""}
+      </button>
+      <div class="p-3 md:p-4 flex flex-col flex-1">
+        <h3 class="font-semibold leading-snug">${p.name}</h3>
+        <p class="text-mute text-sm mt-1">Desde ${eur(p.price)}</p>
+        <button onclick="openPDP(${p.id})" class="mt-3 border-2 border-dark min-h-[44px] rounded-xl font-semibold text-sm hover:bg-dark hover:text-white transition">Elegir opciones</button>
+      </div>
+    </article>`,
           )
           .join("");
       }
 
-      function addToCart(id) {
-        const qtyInput = document.getElementById(`qty-${id}`);
-        const quantity = parseInt(qtyInput.value) || 1;
-
-        const existing = cart.find((p) => p.id === id);
-
-        if (existing) {
-          existing.quantity += quantity;
-        } else {
-          const product = products.find((p) => p.id === id);
-          cart.push({ ...product, quantity });
+      /* ---------- Ficha de producto ---------- */
+      function addBD(n) {
+        const d = new Date();
+        let c = 0;
+        while (c < n) {
+          d.setDate(d.getDate() + 1);
+          if (d.getDay() % 6) c++;
         }
+        return d;
+      }
+      const fmtDate = (d) =>
+        d.toLocaleDateString("es-ES", {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+        });
 
-        qtyInput.value = 1;
-
-        updateCart();
-        animateCartIcon();
-        showToast();
+      function openPDP(id) {
+        const p = P(id);
+        sel = {
+          p,
+          material: p.materials[0].id,
+          color: p.colors[0].name,
+          qty: 1,
+        };
+        renderPDP();
+        $("pdp").classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+      }
+      function closePDP() {
+        $("pdp").classList.add("hidden");
+        document.body.style.overflow = "";
       }
 
-      function changeQuantity(id, delta) {
-        const product = cart.find((p) => p.id === id);
-        if (!product) return;
+      function renderPDP() {
+        const { p, material, color, qty } = sel;
+        const price = unit({ id: p.id, material });
+        const from = fmtDate(addBD(SHOP.leadDaysMin)),
+          to = fmtDate(addBD(SHOP.leadDaysMax));
+        $("pdp-body").innerHTML = `
+    <div class="flex justify-between items-start mb-3">
+      <div class="w-full aspect-[4/3] rounded-2xl overflow-hidden">${tile(p, true)}</div>
+      <button onclick="closePDP()" class="absolute top-3 right-3 w-11 h-11 flex items-center justify-center bg-bg/90 rounded-full" aria-label="Cerrar">${ic("close")}</button>
+    </div>
+    <h2 id="pdp-title" class="font-head font-bold text-2xl leading-tight">${p.name}</h2>
+    <p class="mt-1"><span class="font-head font-bold text-3xl">${eur(price)}</span> <span class="text-sm text-mute">IVA incluido</span></p>
+    <p class="text-mute mt-2">${p.benefit}</p>
 
-        if (product.quantity + delta <= 0) {
-          lastRemoved = { ...product };
-          cart = cart.filter((item) => item.id !== id);
-          updateCart();
-          showUndoBanner();
-          return;
-        }
+    <p class="font-semibold text-sm mt-5 mb-2">Material</p>
+    <div class="flex gap-2" role="group" aria-label="Material">${p.materials
+      .map(
+        (m) => `
+      <button onclick="sel.material='${m.id}';renderPDP()" aria-pressed="${m.id === material}" class="min-h-[44px] px-4 rounded-xl border-2 text-sm font-medium ${m.id === material ? "border-acc bg-acc/5" : "border-line"}">${m.label}${m.extra ? ` <span class="text-mute">+${eur(m.extra)}</span>` : ""}</button>`,
+      )
+      .join("")}</div>
 
-        product.quantity += delta;
-        updateCart();
+    <p class="font-semibold text-sm mt-5 mb-2">Color: <span class="font-normal text-mute">${color}</span></p>
+    <div class="flex gap-3" role="group" aria-label="Color">${p.colors
+      .map(
+        (c) => `
+      <button onclick="sel.color='${c.name}';renderPDP()" title="${c.name}" aria-label="${c.name}" aria-pressed="${c.name === color}" class="w-11 h-11 rounded-full border border-line flex items-center justify-center ${c.name === color ? "ring-2 ring-acc ring-offset-2 ring-offset-bg" : ""}">
+        <span class="w-8 h-8 rounded-full border border-black/10" style="background:${c.hex}"></span></button>`,
+      )
+      .join("")}</div>
+
+    <div class="mt-5 bg-surf rounded-xl p-4 text-sm space-y-2">
+      <p class="flex gap-3">${ic("clock", "w-5 h-5 text-acc shrink-0")}<span><b>Se imprime bajo pedido.</b> Recíbelo entre el ${from} y el ${to}.</span></p>
+      <p class="flex gap-3">${ic("truck", "w-5 h-5 text-acc shrink-0")}<span>Envío con seguimiento. Gratis desde ${SHOP.freeShippingFrom} €.</span></p>
+      <p class="flex gap-3">${ic("shield", "w-5 h-5 text-acc shrink-0")}<span>Pago seguro · Devolución en 14 días.</span></p>
+    </div>
+
+    <details class="mt-4 border-t border-line py-3">
+      <summary class="flex justify-between items-center font-semibold min-h-[44px]">Especificaciones ${ic("chev", "w-5 h-5 chev")}</summary>
+      <dl class="text-sm mt-2 space-y-1">${Object.entries(p.specs)
+        .map(
+          ([k, v]) =>
+            `<div class="flex gap-2"><dt class="text-mute w-24 shrink-0">${k}</dt><dd>${v}</dd></div>`,
+        )
+        .join("")}</dl>
+    </details>`;
+        $("pdp-foot").innerHTML = `
+    <div class="flex gap-3">
+      <div class="flex items-center border border-line rounded-xl">
+        <button class="w-11 h-[52px]" onclick="sel.qty=Math.max(1,sel.qty-1);renderPDP()" aria-label="Menos">−</button>
+        <span class="w-6 text-center font-semibold">${qty}</span>
+        <button class="w-11 h-[52px]" onclick="sel.qty=Math.min(99,sel.qty+1);renderPDP()" aria-label="Más">+</button>
+      </div>
+      <button onclick="addFromPDP()" class="flex-1 bg-acc hover:bg-acch text-white font-semibold min-h-[52px] rounded-xl transition">Añadir al carrito · ${eur(price * qty)}</button>
+    </div>`;
+        $("pdp-body").parentElement.classList.add("relative");
       }
 
-      function removeItem(id) {
-        const item = cart.find((p) => p.id === id);
-        if (!item) return;
-
-        lastRemoved = { ...item };
-
-        cart = cart.filter((p) => p.id !== id);
+      function addFromPDP() {
+        const { p, material, color, qty } = sel;
+        const ex = cart.find(
+          (i) => i.id === p.id && i.material === material && i.color === color,
+        );
+        if (ex) ex.quantity = Math.min(99, ex.quantity + qty);
+        else cart.push({ id: p.id, material, color, quantity: qty });
+        closePDP();
         updateCart();
+        $("cart-btn").classList.add("cart-bounce");
+        setTimeout(() => $("cart-btn").classList.remove("cart-bounce"), 400);
+        showToast("¡Añadido! Seguir comprando");
+      }
 
-        showUndoBanner();
+      /* ---------- Carrito ---------- */
+      function totals() {
+        const sub = cart.reduce((s, i) => s + unit(i) * i.quantity, 0);
+        const ship =
+          sub === 0 || sub >= SHOP.freeShippingFrom ? 0 : SHOP.shippingCost;
+        return { sub, ship, total: sub + ship };
       }
 
       function updateCart() {
-        const cartItems = document.getElementById("cart-items");
-        const cartCount = document.getElementById("cart-count");
-        const cartTotal = document.getElementById("cart-total");
+        cart = cart.filter((i) => P(i.id));
+        $("cart-count").innerText = cart.reduce((s, i) => s + i.quantity, 0);
+        $("cart-items").innerHTML = cart.length
+          ? cart
+              .map((it, idx) => {
+                const p = P(it.id),
+                  m = p.materials.find((x) => x.id === it.material);
+                return `<div class="flex items-center gap-3 border-b border-line pb-4">
+      <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0">${tile(p)}</div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-semibold leading-snug">${p.name}</p>
+        <p class="text-xs text-mute">${m.label} · ${it.color}</p>
+        <p class="text-sm mt-1">${eur(unit(it))}</p>
+      </div>
+      <div class="flex items-center">
+        <button class="w-9 h-11" onclick="changeQuantity(${idx},-1)" aria-label="Menos">−</button>
+        <span class="w-5 text-center text-sm">${it.quantity}</span>
+        <button class="w-9 h-11" onclick="changeQuantity(${idx},1)" aria-label="Más">+</button>
+        <button class="w-11 h-11 flex items-center justify-center text-mute hover:text-err" onclick="removeItem(${idx})" aria-label="Eliminar">${ic("trash", "w-4 h-4")}</button>
+      </div></div>`;
+              })
+              .join("")
+          : `<p class="text-mute text-center py-10">Tu carrito está vacío. Mira lo último que hemos impreso.</p>`;
 
-        cartCount.innerText = cart.reduce(
-          (sum, item) => sum + item.quantity,
-          0,
-        );
+        const t = totals();
+        $("cart-sub").innerText = eur(t.sub);
+        $("cart-ship").innerText =
+          t.sub === 0 ? "–" : t.ship === 0 ? "Gratis" : eur(t.ship);
+        $("cart-total").innerText = eur(t.total);
+        $("ship-hint").innerText =
+          t.sub > 0 && t.ship > 0
+            ? `Te faltan ${eur(SHOP.freeShippingFrom - t.sub)} para el envío gratis.`
+            : "";
 
-        cartItems.innerHTML = cart
-          .map(
-            (item) => `
-          <div class="flex items-center justify-between border-b pb-4">
-            <div class="flex items-center gap-3">
-              <img src="${item.img}" class="w-12 h-12 object-cover rounded">
-              <div>
-                <p class="text-sm font-semibold">${item.name}</p>
-                <p class="text-xs text-gray-500">€${item.price.toFixed(2)}</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-2">
-  <button onclick="changeQuantity(${item.id}, -1)">-</button>
-  <span>${item.quantity}</span>
-  <button onclick="changeQuantity(${item.id}, 1)">+</button>
-
-  <button onclick="removeItem(${item.id})"
-  class="p-1 rounded hover:bg-red-50 transition group" title="Remove product">
-
-  <svg class="w-4 h-4 text-gray-400 group-hover:text-red-500 transition"
-     fill="none" stroke="currentColor" stroke-width="2"
-     viewBox="0 0 24 24">
-  <path stroke-linecap="round" stroke-linejoin="round"
-        d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6" />
-</svg>
-
-</button>
-</div>
-          </div>
-        `,
-          )
-          .join("");
-
-        const total = cart.reduce(
-          (sum, item) => sum + item.price * item.quantity,
-          0,
-        );
-        cartTotal.innerText = `€${total.toFixed(2)}`;
-
-        if (token) {
-          saveCartToBackend();
-        } else {
-          localStorage.setItem("wilkshop_cart", JSON.stringify(cart));
-        }
+        if (token) saveCartToBackend();
+        else localStorage.setItem("capalab_cart", JSON.stringify(cart));
       }
 
-      let undoTimeout;
-
-      function showUndoBanner() {
-        const banner = document.getElementById("undo-banner");
-        const text = document.getElementById("undo-text");
-
-        if (lastRemoved) {
-          text.innerText = `${lastRemoved.name} removed`;
-        }
-
-        banner.classList.remove("opacity-0", "pointer-events-none");
-        banner.classList.add("toast-show");
-
+      function changeQuantity(idx, d) {
+        const it = cart[idx];
+        if (!it) return;
+        if (it.quantity + d <= 0) return removeItem(idx);
+        it.quantity = Math.min(99, it.quantity + d);
+        updateCart();
+      }
+      function removeItem(idx) {
+        lastRemoved = cart[idx];
+        if (!lastRemoved) return;
+        cart.splice(idx, 1);
+        updateCart();
+        $("undo-text").innerText = `${P(lastRemoved.id).name} eliminado`;
+        const b = $("undo-banner");
+        b.classList.remove("opacity-0", "pointer-events-none");
         clearTimeout(undoTimeout);
-
         undoTimeout = setTimeout(() => {
-          banner.classList.add("opacity-0", "pointer-events-none");
-          banner.classList.remove("toast-show");
+          b.classList.add("opacity-0", "pointer-events-none");
           lastRemoved = null;
         }, 4000);
       }
-
       function undoRemove() {
         if (!lastRemoved) return;
-
-        const existing = cart.find((p) => p.id === lastRemoved.id);
-
-        if (existing) {
-          existing.quantity += lastRemoved.quantity;
-        } else {
-          cart.push(lastRemoved);
-        }
-
+        const l = lastRemoved,
+          ex = cart.find(
+            (i) =>
+              i.id === l.id && i.material === l.material && i.color === l.color,
+          );
+        if (ex) ex.quantity += l.quantity;
+        else cart.push(l);
         lastRemoved = null;
-        updateCart();
-
-        const banner = document.getElementById("undo-banner");
-
         clearTimeout(undoTimeout);
-
-        banner.classList.add("opacity-0", "pointer-events-none");
-        banner.classList.remove("toast-show");
+        $("undo-banner").classList.add("opacity-0", "pointer-events-none");
+        updateCart();
       }
-
-      function animateCartIcon() {
-        const cartIcon = document.getElementById("cart-btn");
-        cartIcon.classList.add("cart-bounce");
-
-        setTimeout(() => {
-          cartIcon.classList.remove("cart-bounce");
-        }, 400);
-      }
-
-      function showToast() {
-        const toast = document.getElementById("toast");
-        toast.classList.remove("opacity-0");
-        toast.classList.add("toast-show");
-
-        setTimeout(() => {
-          toast.classList.add("opacity-0");
-          toast.classList.remove("toast-show");
-        }, 2000);
-      }
-
       function toggleCart() {
-        document
-          .getElementById("cart-sidebar")
-          .classList.toggle("translate-x-full");
-        document.getElementById("cart-overlay").classList.toggle("hidden");
+        $("cart-sidebar").classList.toggle("translate-x-full");
+        $("cart-overlay").classList.toggle("hidden");
       }
-
       function closeCart() {
-        document
-          .getElementById("cart-sidebar")
-          .classList.add("translate-x-full");
-        document.getElementById("cart-overlay").classList.add("hidden");
+        $("cart-sidebar").classList.add("translate-x-full");
+        $("cart-overlay").classList.add("hidden");
       }
 
-      let elements;
-      let clientSecret;
-
-      async function checkout() {
-        if (cart.length === 0) {
-          showPopup("Your cart is empty", "error");
-          return;
-        }
-
-        try {
-          const response = await fetch("/api/create-payment-intent", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ items: cart }),
-          });
-
-          const data = await response.json();
-          clientSecret = data.clientSecret;
-
-          const appearance = {
-            theme: "stripe",
-          };
-
-          elements = stripe.elements({ appearance, clientSecret });
-
-          const paymentElement = elements.create("payment");
-          paymentElement.mount("#payment-element");
-
-          openPaymentModal();
-        } catch (error) {
-          showPopup("Error starting the payment", "error");
-        }
+      function showToast(msg) {
+        $("toast-text").textContent = msg;
+        const t = $("toast");
+        t.classList.remove("opacity-0");
+        setTimeout(() => t.classList.add("opacity-0"), 2200);
+      }
+      function showPopup(message, type = "success") {
+        const p = $("popup");
+        p.textContent = message;
+        p.classList.toggle("bg-err", type === "error");
+        p.classList.toggle("bg-dark", type !== "error");
+        p.classList.remove("opacity-0");
+        setTimeout(() => p.classList.add("opacity-0"), 2500);
       }
 
-      function openPaymentModal() {
-        document.getElementById("payment-modal").classList.remove("hidden");
+      /* ---------- Pago ---------- */
+      let elements,
+        customer = null;
+
+      let busy = false;
+      function setBusy(on, text) {
+        busy = on;
+        document.body.classList.toggle("busy", on);
+        $("busy").classList.toggle("hidden", !on);
+        $("busy").classList.toggle("flex", on);
+        if (text) $("busy-text").textContent = text;
+        document.body.style.overflow = on ? "hidden" : "";
       }
-
-      function closePaymentModal() {
-        document.getElementById("payment-modal").classList.add("hidden");
-      }
-
-      function scrollToProducts() {
-        document
-          .getElementById("products")
-          .scrollIntoView({ behavior: "smooth" });
-      }
-
-      const paymentForm = document.getElementById("payment-form");
-
-      paymentForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const { error, paymentIntent } = await stripe.confirmPayment({
-          elements,
-          redirect: "if_required",
-        });
-
-        if (error) {
-          document.getElementById("payment-message").textContent =
-            error.message;
-          return;
-        }
-
-        if (paymentIntent && paymentIntent.status === "succeeded") {
-          cart = [];
-          localStorage.removeItem("wilkshop_cart");
-          updateCart();
-
-          document
-            .getElementById("cart-sidebar")
-            .classList.add("translate-x-full");
-          document.getElementById("cart-overlay").classList.add("hidden");
-
-          document.getElementById("payment-form").innerHTML = `
-  <div class="flex flex-col items-center text-center py-6 px-4 animate-[fadeSlide_0.3s_ease]">
-
-    <div class="w-14 h-14 flex items-center justify-center
-                rounded-full bg-green-100 mb-4">
-      <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor"
-           stroke-width="3" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round"
-              d="M5 13l4 4L19 7" />
-      </svg>
-    </div>
-
-    <h4 class="text-lg sm:text-xl font-semibold mb-1">
-      Payment completed
-    </h4>
-
-    <p class="text-gray-500 text-sm sm:text-base mb-5">
-      Thank you for your purchase at WilkShop.
-    </p>
-
-    <button onclick="closePaymentModal()"
-      class="w-full sm:w-auto bg-black text-white
-             px-5 py-2.5 rounded-lg text-sm font-medium
-             hover:bg-gray-800 transition">
-      Close
-    </button>
-
-  </div>
-`;
+      // Bloquea el teclado (Esc, Tab, Enter…) y avisa si intentan cerrar la pestaña
+      document.addEventListener(
+        "keydown",
+        (e) => {
+          if (busy) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+          }
+        },
+        true,
+      );
+      window.addEventListener("beforeunload", (e) => {
+        if (busy) {
+          e.preventDefault();
+          e.returnValue = "";
         }
       });
 
+      function checkout() {
+        if (!cart.length) return showPopup("Tu carrito está vacío", "error");
+        showShipStep();
+        $("payment-modal").classList.remove("hidden");
+      }
+      function showShipStep() {
+        $("pay-title").textContent = "Datos de envío";
+        $("ship-form").classList.remove("hidden");
+        $("payment-form").classList.add("hidden");
+        $("payment-done").classList.add("hidden");
+        $("payment-done").classList.remove("flex");
+      }
+      function closePaymentModal() {
+        $("payment-modal").classList.add("hidden");
+      }
+
+      $("ship-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const f = e.target,
+          msg = $("ship-message"),
+          btn = $("ship-submit");
+        const v = (n) => f.elements[n].value.trim();
+        customer = {
+          name: v("name"),
+          email: v("email"),
+          phone: v("phone"),
+          address: v("address"),
+          postal: v("postal"),
+          city: v("city"),
+          province: v("province"),
+        };
+        msg.textContent = "";
+        if (!/^\d{5}$/.test(customer.postal)) {
+          msg.textContent = "El código postal debe tener 5 dígitos.";
+          return;
+        }
+        btn.disabled = true;
+        btn.textContent = "Preparando el pago…";
+        try {
+          const res = await fetch("/api/create-payment-intent", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              items: cart,
+              customer,
+              accepted: f.elements.accept.checked,
+            }),
+          });
+          const data = await res.json();
+          if (!res.ok)
+            throw new Error(
+              data.error ||
+                "No hemos podido iniciar el pago. Inténtalo de nuevo.",
+            );
+          $("payment-element").innerHTML = "";
+          $("payment-message").textContent = "";
+          elements = stripe.elements({
+            appearance: {
+              theme: "stripe",
+              variables: { colorPrimary: "#C2410C", borderRadius: "12px" },
+            },
+            clientSecret: data.clientSecret,
+          });
+          const billing = {
+            name: customer.name,
+            email: customer.email,
+            address: { country: "ES" },
+          };
+          if (customer.phone) billing.phone = customer.phone;
+          elements
+            .create("payment", { defaultValues: { billingDetails: billing } })
+            .mount("#payment-element");
+          $("ship-summary").textContent =
+            `${customer.name} · ${customer.address}, ${customer.postal} ${customer.city}`;
+          $("submit-payment").textContent = `Pagar ${eur(totals().total)}`;
+          $("pay-title").textContent = "Pagar de forma segura";
+          $("ship-form").classList.add("hidden");
+          $("payment-form").classList.remove("hidden");
+        } catch (err) {
+          msg.textContent = err.message;
+        }
+        btn.disabled = false;
+        btn.textContent = "Continuar al pago";
+      });
+
+      $("payment-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (busy) return;
+        const btn = $("submit-payment");
+        btn.disabled = true;
+        setBusy(true, "Procesando tu pago…");
+        try {
+          const { error, paymentIntent } = await stripe.confirmPayment({
+            elements,
+            redirect: "if_required",
+          });
+          if (error) {
+            $("payment-message").textContent = error.message;
+            return;
+          }
+
+          if (paymentIntent && paymentIntent.status === "succeeded") {
+            setBusy(true, "Confirmando tu pedido…");
+            let orderNo = "";
+            try {
+              const r = await fetch("/api/order-complete", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ paymentIntentId: paymentIntent.id }),
+              });
+              const d = await r.json();
+              if (r.ok && d.orderNumber) orderNo = d.orderNumber;
+            } catch {}
+            cart = [];
+            localStorage.removeItem("capalab_cart");
+            updateCart();
+            closeCart();
+            $("done-text").textContent =
+              `${orderNo ? "Pedido " + orderNo + ". " : ""}Te enviaremos la confirmación a ${customer.email}. Ya estamos con la impresora.`;
+            $("pay-title").textContent = "¡Gracias!";
+            $("payment-form").classList.add("hidden");
+            $("payment-done").classList.remove("hidden");
+            $("payment-done").classList.add("flex");
+          } else {
+            $("payment-message").textContent =
+              "Tu pago está en proceso. Te enviaremos la confirmación por email cuando se complete.";
+          }
+        } finally {
+          btn.disabled = false;
+          setBusy(false); // se quita justo cuando ya se ve el "¡Gracias!" (o el error)
+        }
+      });
+
+      /* ---------- Cuenta ---------- */
       async function register(email, password) {
         const res = await fetch("/api/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
         });
-
         const data = await res.json();
-
         if (!res.ok) {
-          showPopup(data.error || "Registration error", "error");
+          showPopup(data.error || "Error al registrarte", "error");
           return false;
         }
-
-        showPopup("Account created successfully");
         return true;
       }
-
       async function login(email, password) {
         const res = await fetch("/api/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
         });
-
         const data = await res.json();
-
         if (data.token) {
           token = data.token;
           localStorage.setItem("token", token);
-
           cart = [];
-
           await loadCartFromBackend();
-          updateUserUI();
-        } else {
-          showPopup("Incorrect email or password", "error");
-        }
+          await checkAdmin();
+        } else showPopup("Email o contraseña incorrectos", "error");
       }
-
       async function loadCartFromBackend() {
         if (!token) return;
-
         const res = await fetch("/api/cart", {
-          headers: {
-            Authorization: token,
-          },
+          headers: { Authorization: token },
         });
-
-        const data = await res.json();
-
-        cart = data || [];
+        if (res.status === 401) {
+          token = null;
+          localStorage.removeItem("token");
+          updateUserUI();
+          return;
+        }
+        cart = (await res.json()) || [];
         updateCart();
       }
-
       async function saveCartToBackend() {
         await fetch("/api/cart", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
+          headers: { "Content-Type": "application/json", Authorization: token },
           body: JSON.stringify({ cart }),
         });
       }
 
       let isLogin = true;
-
       function openAuthModal() {
         isLogin = true;
-
-        document.getElementById("auth-title").innerText = "Login";
-        document.getElementById("toggle-text").innerText =
-          "Don't have an account?";
-        document.getElementById("toggle-btn").innerText = "Sign up";
-
-        document.getElementById("auth-modal").classList.remove("hidden");
+        renderAuth();
+        $("auth-modal").classList.remove("hidden");
       }
-
       function closeAuthModal() {
-        document.getElementById("auth-modal").classList.add("hidden");
+        $("auth-modal").classList.add("hidden");
       }
-
       function toggleAuthMode() {
         isLogin = !isLogin;
-
-        document.getElementById("auth-title").innerText = isLogin
-          ? "Login"
-          : "Sign up";
-
-        document.getElementById("toggle-text").innerText = isLogin
-          ? "Don't have an account?"
-          : "Already have an account?";
-
-        document.getElementById("toggle-btn").innerText = isLogin
-          ? "Sign up"
-          : "Log in";
+        renderAuth();
       }
-
+      function renderAuth() {
+        $("auth-title").innerText = isLogin ? "Iniciar sesión" : "Crear cuenta";
+        $("toggle-text").innerText = isLogin
+          ? "¿No tienes cuenta?"
+          : "¿Ya tienes cuenta?";
+        $("toggle-btn").innerText = isLogin ? "Regístrate" : "Inicia sesión";
+      }
       async function handleAuth() {
-        const email = document.getElementById("auth-email").value;
-        const password = document.getElementById("auth-password").value;
-
-        if (!email || !password) {
-          showPopup("Fill in all fields", "error");
+        const email = $("auth-email").value,
+          password = $("auth-password").value;
+        if (!email || !password)
+          return showPopup("Rellena todos los campos", "error");
+        if (isLogin) {
+          const prev = token;
+          await login(email, password);
+          if (token && token !== prev) showPopup("Bienvenido/a de nuevo");
+          else return;
+        } else {
+          if (!(await register(email, password))) return;
+          showPopup("Cuenta creada. Ya puedes iniciar sesión");
+          isLogin = true;
+          renderAuth();
           return;
         }
-
-        if (isLogin) {
-          const prevToken = token;
-          await login(email, password);
-
-          if (token && token !== prevToken) {
-            showPopup("Welcome 👋");
-          }
-        } else {
-          const ok = await register(email, password);
-
-          if (!ok) return;
-
-          showPopup("Registration complete, please log in");
-        }
-
         closeAuthModal();
       }
-
       function updateUserUI() {
-        const btn = document.getElementById("user-btn");
-
-        if (token) {
-          btn.innerText = "👤 Account";
-          btn.onclick = openAccountPopup;
-        } else {
-          btn.innerText = "Log in";
-          btn.onclick = openAuthModal;
-        }
+        const showAdmin = !!(token && isAdmin);
+        $("admin-btn").classList.toggle("hidden", !showAdmin);
+        $("admin-btn").classList.toggle("flex", showAdmin);
+        const b = $("user-btn");
+        b.innerHTML = token
+          ? `${ic("user")}<span class="hidden sm:inline">Cuenta</span>`
+          : `${ic("user")}<span>Entrar</span>`;
+        b.onclick = token ? openAccountPopup : openAuthModal;
       }
-
       function logout() {
+        isAdmin = false;
         token = null;
         localStorage.removeItem("token");
-
-        cart = JSON.parse(localStorage.getItem("wilkshop_cart")) || [];
+        cart = JSON.parse(localStorage.getItem("capalab_cart")) || [];
         updateCart();
-
         closeAccountPopup();
         closeAuthModal();
-
-        showPopup("Logged out successfully");
+        showPopup("Sesión cerrada");
         updateUserUI();
       }
-
-      function showPopup(message, type = "success") {
-        const popup = document.getElementById("popup");
-
-        popup.textContent = message;
-
-        if (type === "error") {
-          popup.classList.remove("bg-black");
-          popup.classList.add("bg-red-500");
-        } else {
-          popup.classList.remove("bg-red-500");
-          popup.classList.add("bg-black");
-        }
-
-        popup.classList.remove("opacity-0");
-        popup.classList.add("toast-show");
-
-        setTimeout(() => {
-          popup.classList.add("opacity-0");
-          popup.classList.remove("toast-show");
-        }, 2500);
-      }
-
       function openAccountPopup() {
-        document.getElementById("account-popup").classList.remove("hidden");
+        $("account-popup").classList.remove("hidden");
       }
-
       function closeAccountPopup() {
-        document.getElementById("account-popup").classList.add("hidden");
+        $("account-popup").classList.add("hidden");
       }
-
       async function deleteAccount() {
         if (
           !confirm(
-            "Are you sure you want to delete your account? This action is irreversible.",
+            "¿Seguro que quieres eliminar tu cuenta? Esta acción es irreversible.",
           )
         )
           return;
-
         try {
           const res = await fetch("/api/delete-account", {
             method: "DELETE",
-            headers: {
-              Authorization: token,
-            },
+            headers: { Authorization: token },
           });
-
           const data = await res.json();
-
-          if (!res.ok) {
-            showPopup(data.error || "Error deleting account", "error");
-            return;
-          }
-
+          if (!res.ok)
+            return showPopup(
+              data.error || "Error al eliminar la cuenta",
+              "error",
+            );
           logout();
-          closeAccountPopup();
-
-          showPopup("Account deleted successfully");
-        } catch (err) {
-          showPopup("Server error", "error");
+          showPopup("Cuenta eliminada");
+        } catch {
+          showPopup("Error del servidor", "error");
         }
       }
 
-      document.addEventListener("keydown", (e) => {
-        if (e.key !== "Escape") return;
-
-        const layers = [
-          { id: "account-popup", close: closeAccountPopup },
-          { id: "auth-modal", close: closeAuthModal },
-          { id: "payment-modal", close: closePaymentModal },
-        ];
-
-        for (const layer of layers) {
-          const el = document.getElementById(layer.id);
-          if (!el.classList.contains("hidden")) {
-            layer.close();
-            return;
-          }
+      /* ---------- Pedido a medida ---------- */
+      $("quote-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const msg = $("quote-msg"),
+          btn = e.target.querySelector("button");
+        btn.disabled = true;
+        msg.className = "text-sm text-center text-mute";
+        msg.textContent = "Enviando…";
+        try {
+          const res = await fetch("/api/custom-request", {
+            method: "POST",
+            body: new FormData(e.target),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error);
+          e.target.reset();
+          $("file-name").textContent = "Subir STL / 3MF / OBJ";
+          msg.className = "text-sm text-center text-ok font-medium";
+          msg.textContent =
+            "¡Recibido! Te respondemos en menos de 24 h laborables.";
+        } catch (err) {
+          msg.className = "text-sm text-center text-err";
+          msg.textContent =
+            err.message || "No hemos podido enviarlo. Inténtalo de nuevo.";
         }
-
-        const overlay = document.getElementById("cart-overlay");
-        if (!overlay.classList.contains("hidden")) {
-          closeCart();
-        }
+        btn.disabled = false;
       });
 
-      renderProducts();
-      if (token) {
-        loadCartFromBackend();
-      } else {
-        updateCart();
-      }
-      updateUserUI();
+      /* ---------- Varios ---------- */
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        const layers = [
+          ["account-popup", closeAccountPopup],
+          ["auth-modal", closeAuthModal],
+          ["payment-modal", closePaymentModal],
+          ["pdp", closePDP],
+        ];
+        for (const [id, fn] of layers)
+          if (!$(id).classList.contains("hidden")) return fn();
+        if (!$("cart-overlay").classList.contains("hidden")) closeCart();
+      });
+
+      $("hero-art").innerHTML = Array.from({ length: 16 }, (_, i) => {
+        const t = i / 15,
+          rx = 70 + Math.sin(t * Math.PI * 1.1 + 0.3) * 38;
+        return `<ellipse cx="120" cy="${255 - i * 14}" rx="${rx.toFixed(0)}" ry="9" fill="${i % 2 ? "#C2410C" : "#F97316"}" opacity="${(0.6 + t * 0.4).toFixed(2)}"/>`;
+      }).join("");
+
+      $("faq-list").innerHTML = FAQ.map(
+        ([q, a]) => `
+  <details class="py-1"><summary class="flex justify-between items-center gap-4 font-semibold min-h-[52px]">${q}${ic("chev", "w-5 h-5 chev shrink-0")}</summary>
+  <p class="text-mute pb-4">${a}</p></details>`,
+      ).join("");
+
+      (async () => {
+        await loadCatalog();
+        renderCategories();
+        renderProducts();
+        await checkAdmin();
+        if (token) loadCartFromBackend();
+        else updateCart();
+      })();
     </script>
   </body>
 </html>
