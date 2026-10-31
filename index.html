@@ -132,7 +132,6 @@
     </style>
   </head>
   <body class="bg-bg text-ink font-body antialiased">
-    <!-- Iconos SVG -->
     <svg width="0" height="0" style="position: absolute" aria-hidden="true">
       <symbol id="i-cart" viewBox="0 0 24 24">
         <path d="M3 3h2l2.4 11.2a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L20 7H6" />
@@ -202,13 +201,11 @@
       </symbol>
     </svg>
 
-    <!-- Barra de anuncio -->
     <div class="bg-dark text-bg text-sm text-center py-2 px-4">
       Envío gratis a la España peninsular desde 40 € · Producción propia,
       entrega en 4-6 días
     </div>
 
-    <!-- Header -->
     <nav class="bg-bg/95 backdrop-blur border-b border-line sticky top-0 z-50">
       <div
         class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center"
@@ -258,7 +255,6 @@
       </div>
     </nav>
 
-    <!-- Hero -->
     <header
       class="max-w-6xl mx-auto px-4 pt-10 pb-12 md:pt-20 md:pb-20 grid md:grid-cols-2 gap-10 items-center"
     >
@@ -316,7 +312,6 @@
       </div>
     </header>
 
-    <!-- Confianza -->
     <section class="bg-surf border-y border-line">
       <div
         class="max-w-6xl mx-auto px-4 py-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm font-medium"
@@ -344,7 +339,6 @@
       </div>
     </section>
 
-    <!-- Categorías -->
     <section class="max-w-6xl mx-auto px-4 pt-16">
       <h2 class="font-head font-bold text-2xl md:text-4xl mb-6">
         Elige por uso
@@ -352,7 +346,6 @@
       <div id="categories" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
     </section>
 
-    <!-- Catálogo -->
     <main id="catalogo" class="max-w-6xl mx-auto px-4 py-16">
       <div class="flex items-end justify-between mb-6">
         <h2 id="catalog-title" class="font-head font-bold text-2xl md:text-4xl">
@@ -372,7 +365,6 @@
       ></div>
     </main>
 
-    <!-- Cómo funciona -->
     <section id="como-funciona" class="bg-surf">
       <div class="max-w-6xl mx-auto px-4 py-16">
         <h2 class="font-head font-bold text-2xl md:text-4xl mb-10">
@@ -417,7 +409,6 @@
       </div>
     </section>
 
-    <!-- Storytelling -->
     <section
       id="story"
       class="max-w-6xl mx-auto px-4 py-16 grid md:grid-cols-2 gap-10 items-center"
@@ -467,7 +458,6 @@
       </div>
     </section>
 
-    <!-- A medida -->
     <section id="a-medida" class="bg-dark text-bg">
       <div class="max-w-6xl mx-auto px-4 py-16 grid md:grid-cols-2 gap-10">
         <div>
@@ -554,7 +544,6 @@
       </div>
     </section>
 
-    <!-- FAQ -->
     <section id="faq" class="max-w-3xl mx-auto px-4 py-16">
       <h2 class="font-head font-bold text-2xl md:text-4xl mb-6">
         Preguntas frecuentes
@@ -565,7 +554,6 @@
       ></div>
     </section>
 
-    <!-- Footer -->
     <footer class="bg-dark text-bg/70 text-sm">
       <div
         class="max-w-6xl mx-auto px-4 py-12 grid grid-cols-2 md:grid-cols-4 gap-8"
@@ -612,7 +600,6 @@
       </div>
     </footer>
 
-    <!-- Ficha de producto (PDP) -->
     <div
       id="pdp"
       class="fixed inset-0 z-[80] hidden bg-black/50 flex items-end md:items-center justify-center"
@@ -674,7 +661,6 @@
       </div>
     </aside>
 
-    <!-- Toasts -->
     <div
       id="toast"
       class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-dark text-white px-5 py-3 rounded-xl shadow-lg opacity-0 pointer-events-none z-[300] flex items-center gap-3 whitespace-nowrap"
@@ -701,7 +687,6 @@
       </button>
     </div>
 
-    <!-- Cuenta -->
     <div
       id="account-popup"
       class="fixed inset-0 bg-black/50 hidden z-[400] flex items-center justify-center p-4"
@@ -716,6 +701,12 @@
         </button>
         <h3 class="font-head font-bold text-lg mb-6">Mi cuenta</h3>
         <div class="flex flex-col gap-3">
+          <button
+            onclick="openOrders()"
+            class="bg-acc hover:bg-acch text-white min-h-[48px] rounded-xl"
+          >
+            Mis pedidos
+          </button>
           <button
             onclick="logout()"
             class="bg-dark text-white min-h-[48px] rounded-xl"
@@ -768,6 +759,13 @@
         >
           Continuar
         </button>
+        <button
+          id="forgot-btn"
+          onclick="openRec('forgot')"
+          class="block mx-auto mb-3 text-sm underline min-h-[44px]"
+        >
+          ¿Has olvidado tu contraseña?
+        </button>
         <p class="text-center text-sm">
           <span id="toggle-text">¿No tienes cuenta?</span>
           <button
@@ -781,7 +779,6 @@
       </div>
     </div>
 
-    <!-- Pago -->
     <div
       id="payment-modal"
       class="fixed inset-0 bg-black/50 hidden z-[100] flex items-center justify-center p-4"
@@ -948,6 +945,54 @@
     </div>
 
     <div
+      id="orders-modal"
+      class="fixed inset-0 bg-black/50 hidden z-[410] flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-bg w-full max-w-lg rounded-2xl p-6 relative max-h-[88vh] overflow-y-auto"
+      >
+        <button
+          onclick="closeOrders()"
+          class="absolute top-2 right-2 w-11 h-11 flex items-center justify-center"
+          aria-label="Cerrar"
+        >
+          <svg class="w-5 h-5" aria-hidden="true"><use href="#i-close" /></svg>
+        </button>
+        <h3 class="font-head font-bold text-2xl mb-4">Mis pedidos</h3>
+        <div id="orders-list" class="space-y-3"></div>
+      </div>
+    </div>
+
+    <div
+      id="rec-modal"
+      class="fixed inset-0 bg-black/50 hidden z-[200] flex items-center justify-center p-4"
+    >
+      <div class="bg-bg p-8 rounded-2xl w-full max-w-sm relative">
+        <button
+          onclick="closeRec()"
+          class="absolute top-2 right-2 w-11 h-11 flex items-center justify-center"
+          aria-label="Cerrar"
+        >
+          <svg class="w-5 h-5" aria-hidden="true"><use href="#i-close" /></svg>
+        </button>
+        <h3
+          id="rec-title"
+          class="font-head font-bold text-xl mb-2 text-center"
+        ></h3>
+        <p id="rec-text" class="text-sm text-mute text-center mb-4"></p>
+        <input
+          id="rec-input"
+          class="w-full mb-4 px-3 min-h-[48px] border border-line rounded-xl"
+        />
+        <button
+          id="rec-btn"
+          onclick="submitRec()"
+          class="w-full bg-acc hover:bg-acch text-white font-semibold min-h-[48px] rounded-xl"
+        ></button>
+      </div>
+    </div>
+
+    <div
       id="busy"
       class="fixed inset-0 z-[1000] hidden flex-col items-center justify-center gap-4 bg-black/60 backdrop-blur-sm"
       role="alert"
@@ -1038,7 +1083,6 @@
         ],
       ];
 
-      /* ---------- Catálogo ---------- */
       async function loadCatalog() {
         try {
           const data = await (await fetch("/api/products")).json();
@@ -1047,6 +1091,57 @@
         } catch {
           showPopup("No se pudo cargar el catálogo", "error");
         }
+      }
+
+      async function refreshCatalog() {
+        let data;
+        try {
+          data = await (
+            await fetch("/api/products", { cache: "no-store" })
+          ).json();
+        } catch {
+          return;
+        }
+        SHOP = data.config;
+        PRODUCTS = data.products;
+
+        const before = cart.length;
+        renderProducts();
+        updateCart();
+        if (cart.length < before)
+          showPopup(
+            "Algún producto de tu carrito ya no está disponible",
+            "error",
+          );
+
+        if (!$("pdp").classList.contains("hidden") && sel) {
+          const np = P(sel.p.id);
+          if (!np) {
+            closePDP();
+            showPopup("Este producto ya no está disponible", "error");
+          } else {
+            sel.p = np;
+            if (!np.materials.some((m) => m.id === sel.material))
+              sel.material = np.materials[0].id;
+            if (!np.colors.some((c) => c.name === sel.color))
+              sel.color = np.colors[0].name;
+            renderPDP();
+          }
+        }
+      }
+
+      function listenCatalog() {
+        if (!window.EventSource) return;
+        let first = true;
+        const es = new EventSource("/api/catalog-events");
+        es.addEventListener("catalog", refreshCatalog);
+        es.onopen = () => {
+          if (!first) refreshCatalog();
+          first = false;
+        };
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) refreshCatalog();
+        });
       }
 
       function renderCategories() {
@@ -1091,6 +1186,7 @@
       <button onclick="openPDP(${p.id})" class="relative aspect-square block" aria-label="Ver ${p.name}">
         ${tile(p)}
         ${p.tag ? `<span class="absolute top-2 left-2 bg-dark text-bg text-xs font-medium rounded-full px-3 py-1">${p.tag}</span>` : ""}
+        ${p.soldOut ? `<span class="absolute inset-0 bg-bg/60 flex items-center justify-center"><span class="bg-dark text-bg text-sm font-semibold rounded-full px-4 py-1.5">Agotado</span></span>` : ""}
       </button>
       <div class="p-3 md:p-4 flex flex-col flex-1">
         <h3 class="font-semibold leading-snug">${p.name}</h3>
@@ -1102,7 +1198,6 @@
           .join("");
       }
 
-      /* ---------- Ficha de producto ---------- */
       function addBD(n) {
         const d = new Date();
         let c = 0;
@@ -1192,6 +1287,9 @@
       <button onclick="addFromPDP()" class="flex-1 bg-acc hover:bg-acch text-white font-semibold min-h-[52px] rounded-xl transition">Añadir al carrito · ${eur(price * qty)}</button>
     </div>`;
         $("pdp-body").parentElement.classList.add("relative");
+        if (p.soldOut)
+          $("pdp-foot").innerHTML =
+            `<button disabled class="w-full bg-line text-mute font-semibold min-h-[52px] rounded-xl cursor-not-allowed">Agotado temporalmente</button>`;
       }
 
       function addFromPDP() {
@@ -1208,7 +1306,6 @@
         showToast("¡Añadido! Seguir comprando");
       }
 
-      /* ---------- Carrito ---------- */
       function totals() {
         const sub = cart.reduce((s, i) => s + unit(i) * i.quantity, 0);
         const ship =
@@ -1217,7 +1314,7 @@
       }
 
       function updateCart() {
-        cart = cart.filter((i) => P(i.id));
+        cart = cart.filter((i) => P(i.id) && !P(i.id).soldOut);
         $("cart-count").innerText = cart.reduce((s, i) => s + i.quantity, 0);
         $("cart-items").innerHTML = cart.length
           ? cart
@@ -1314,7 +1411,6 @@
         setTimeout(() => p.classList.add("opacity-0"), 2500);
       }
 
-      /* ---------- Pago ---------- */
       let elements,
         customer = null;
 
@@ -1327,7 +1423,6 @@
         if (text) $("busy-text").textContent = text;
         document.body.style.overflow = on ? "hidden" : "";
       }
-      // Bloquea el teclado (Esc, Tab, Enter…) y avisa si intentan cerrar la pestaña
       document.addEventListener(
         "keydown",
         (e) => {
@@ -1386,7 +1481,10 @@
         try {
           const res = await fetch("/api/create-payment-intent", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: token } : {}),
+            },
             body: JSON.stringify({
               items: cart,
               customer,
@@ -1474,11 +1572,10 @@
           }
         } finally {
           btn.disabled = false;
-          setBusy(false); // se quita justo cuando ya se ve el "¡Gracias!" (o el error)
+          setBusy(false);
         }
       });
 
-      /* ---------- Cuenta ---------- */
       async function register(email, password) {
         const res = await fetch("/api/register", {
           method: "POST",
@@ -1548,6 +1645,7 @@
           ? "¿No tienes cuenta?"
           : "¿Ya tienes cuenta?";
         $("toggle-btn").innerText = isLogin ? "Regístrate" : "Inicia sesión";
+        $("forgot-btn").classList.toggle("hidden", !isLogin);
       }
       async function handleAuth() {
         const email = $("auth-email").value,
@@ -1567,6 +1665,61 @@
           return;
         }
         closeAuthModal();
+      }
+      let recMode = "forgot",
+        recToken = null;
+
+      function openRec(mode, tokenValue) {
+        recMode = mode;
+        recToken = tokenValue || null;
+        const forgot = mode === "forgot";
+        $("rec-title").textContent = forgot
+          ? "Recuperar contraseña"
+          : "Nueva contraseña";
+        $("rec-text").textContent = forgot
+          ? "Escribe tu email y te enviaremos un enlace para crear una contraseña nueva."
+          : "Elige una contraseña nueva (mínimo 8 caracteres).";
+        const i = $("rec-input");
+        i.type = forgot ? "email" : "password";
+        i.placeholder = forgot ? "Email" : "Nueva contraseña";
+        i.value = "";
+        $("rec-btn").textContent = forgot
+          ? "Enviar enlace"
+          : "Guardar contraseña";
+        closeAuthModal();
+        $("rec-modal").classList.remove("hidden");
+      }
+      function closeRec() {
+        $("rec-modal").classList.add("hidden");
+      }
+      async function submitRec() {
+        const forgot = recMode === "forgot";
+        const raw = $("rec-input").value;
+        const v = forgot ? raw.trim() : raw;
+        if (!v) return showPopup("Rellena el campo", "error");
+        try {
+          const res = await fetch(
+            forgot ? "/api/forgot-password" : "/api/reset-password",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(
+                forgot ? { email: v } : { token: recToken, password: v },
+              ),
+            },
+          );
+          const d = await res.json();
+          if (!res.ok) return showPopup(d.error || "Error", "error");
+          closeRec();
+          if (forgot)
+            showPopup("Si el email existe, te hemos enviado un enlace");
+          else {
+            showPopup("Contraseña cambiada. Ya puedes iniciar sesión");
+            openAuthModal();
+          }
+        } catch {
+          showPopup("Error del servidor", "error");
+        }
       }
       function updateUserUI() {
         const showAdmin = !!(token && isAdmin);
@@ -1620,7 +1773,6 @@
         }
       }
 
-      /* ---------- Pedido a medida ---------- */
       $("quote-form").addEventListener("submit", async (e) => {
         e.preventDefault();
         const msg = $("quote-msg"),
@@ -1648,7 +1800,6 @@
         btn.disabled = false;
       });
 
-      /* ---------- Varios ---------- */
       document.addEventListener("keydown", (e) => {
         if (e.key !== "Escape") return;
         const layers = [
@@ -1674,13 +1825,87 @@
   <p class="text-mute pb-4">${a}</p></details>`,
       ).join("");
 
+      const esc = (s) =>
+        String(s ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+
+      const ORDER_ST = {
+        paid: ["Pagado · en cola", "bg-ok/10 text-ok"],
+        printing: ["Imprimiendo", "bg-acc/10 text-acc"],
+        shipped: ["Enviado", "bg-dark text-bg"],
+        delivered: ["Entregado", "bg-ok text-white"],
+        cancelled: ["Cancelado", "bg-err/10 text-err"],
+      };
+
+      async function openOrders() {
+        closeAccountPopup();
+        $("orders-modal").classList.remove("hidden");
+        const box = $("orders-list");
+        box.innerHTML = '<p class="text-mute text-center py-8">Cargando…</p>';
+        try {
+          const res = await fetch("/api/my-orders", {
+            headers: { Authorization: token },
+          });
+          if (!res.ok) throw new Error();
+          const list = await res.json();
+          box.innerHTML = list.length
+            ? list
+                .map((o) => {
+                  const [lbl, cls] = ORDER_ST[o.status] || [
+                    o.status,
+                    "bg-surf text-mute",
+                  ];
+                  const when = new Date(
+                    o.created_at.replace(" ", "T") + "Z",
+                  ).toLocaleDateString("es-ES", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  });
+                  return `<div class="bg-white border border-line rounded-2xl p-4 text-sm">
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-1">
+              <span class="font-head font-bold">${esc(o.number)}</span>
+              <span class="text-xs font-medium rounded-full px-3 py-1 ${cls}">${esc(lbl)}</span>
+            </div>
+            <p class="text-mute mb-2">${when}</p>
+            ${o.items.map((l) => `<p>${l.qty} × ${esc(l.name)} <span class="text-mute">(${esc(l.material)}, ${esc(l.color)})</span></p>`).join("")}
+            <p class="font-semibold mt-2">Total: ${eur(o.total / 100)}</p>
+            ${o.tracking ? `<p class="mt-2 bg-surf rounded-xl p-3">Seguimiento: <b>${esc(o.carrier ? o.carrier + " · " : "")}${esc(o.tracking)}</b></p>` : ""}
+          </div>`;
+                })
+                .join("")
+            : '<p class="text-mute text-center py-8">Todavía no tienes pedidos.</p>';
+        } catch {
+          box.innerHTML =
+            '<p class="text-err text-center py-8">No se pudieron cargar tus pedidos.</p>';
+        }
+      }
+      function closeOrders() {
+        $("orders-modal").classList.add("hidden");
+      }
+
       (async () => {
         await loadCatalog();
         renderCategories();
         renderProducts();
+        listenCatalog();
         await checkAdmin();
         if (token) loadCartFromBackend();
         else updateCart();
+        const rt = new URLSearchParams(location.search).get("reset");
+        if (rt) {
+          history.replaceState({}, "", "/");
+          openRec("reset", rt);
+        }
       })();
     </script>
   </body>

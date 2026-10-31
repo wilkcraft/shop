@@ -6,10 +6,26 @@
     "leadDaysMin": 4,
     "leadDaysMax": 6,
     "categories": [
-      { "id": "escritorio", "name": "Escritorio", "icon": "desk" },
-      { "id": "hogar", "name": "Hogar", "icon": "home" },
-      { "id": "juegos", "name": "Juegos", "icon": "gamepad" },
-      { "id": "regalos", "name": "Regalos", "icon": "gift" }
+      {
+        "id": "escritorio",
+        "name": "Escritorio",
+        "icon": "desk"
+      },
+      {
+        "id": "hogar",
+        "name": "Hogar",
+        "icon": "home"
+      },
+      {
+        "id": "juegos",
+        "name": "Juegos",
+        "icon": "gamepad"
+      },
+      {
+        "id": "regalos",
+        "name": "Regalos",
+        "icon": "gift"
+      }
     ]
   },
   "products": [
@@ -21,14 +37,33 @@
       "tag": "Más vendido",
       "img": "",
       "benefit": "Libera la mesa y mantiene los auriculares a mano.",
+      "visible": true,
+      "soldOut": false,
       "materials": [
-        { "id": "pla", "label": "PLA", "extra": 0 },
-        { "id": "petg", "label": "PETG", "extra": 2 }
+        {
+          "id": "pla",
+          "label": "PLA",
+          "extra": 0
+        },
+        {
+          "id": "petg",
+          "label": "PETG",
+          "extra": 2
+        }
       ],
       "colors": [
-        { "name": "Negro", "hex": "#1B1F27" },
-        { "name": "Blanco", "hex": "#F1EFE9" },
-        { "name": "Naranja", "hex": "#F97316" }
+        {
+          "name": "Negro",
+          "hex": "#1B1F27"
+        },
+        {
+          "name": "Blanco",
+          "hex": "#F1EFE9"
+        },
+        {
+          "name": "Naranja",
+          "hex": "#F97316"
+        }
       ],
       "specs": {
         "Medidas": "10 × 10 × 24 cm",
@@ -45,13 +80,30 @@
       "img": "",
       "benefit": "Bolis, clips y cables en su sitio. Se encajan varios módulos.",
       "materials": [
-        { "id": "pla", "label": "PLA", "extra": 0 },
-        { "id": "petg", "label": "PETG", "extra": 2.5 }
+        {
+          "id": "pla",
+          "label": "PLA",
+          "extra": 0
+        },
+        {
+          "id": "petg",
+          "label": "PETG",
+          "extra": 2.5
+        }
       ],
       "colors": [
-        { "name": "Negro", "hex": "#1B1F27" },
-        { "name": "Gris", "hex": "#8A8F98" },
-        { "name": "Verde", "hex": "#1F9D55" }
+        {
+          "name": "Negro",
+          "hex": "#1B1F27"
+        },
+        {
+          "name": "Gris",
+          "hex": "#8A8F98"
+        },
+        {
+          "name": "Verde",
+          "hex": "#1F9D55"
+        }
       ],
       "specs": {
         "Medidas": "3 módulos de 8 × 8 × 9 cm",
@@ -68,13 +120,30 @@
       "img": "",
       "benefit": "Una maceta con carácter para suculentas y cactus.",
       "materials": [
-        { "id": "pla", "label": "PLA", "extra": 0 },
-        { "id": "petg", "label": "PETG", "extra": 2 }
+        {
+          "id": "pla",
+          "label": "PLA",
+          "extra": 0
+        },
+        {
+          "id": "petg",
+          "label": "PETG",
+          "extra": 2
+        }
       ],
       "colors": [
-        { "name": "Blanco", "hex": "#F1EFE9" },
-        { "name": "Terracota", "hex": "#C2410C" },
-        { "name": "Negro", "hex": "#1B1F27" }
+        {
+          "name": "Blanco",
+          "hex": "#F1EFE9"
+        },
+        {
+          "name": "Terracota",
+          "hex": "#C2410C"
+        },
+        {
+          "name": "Negro",
+          "hex": "#1B1F27"
+        }
       ],
       "specs": {
         "Medidas": "Ø 9 × 8 cm",
@@ -91,12 +160,26 @@
       "img": "",
       "benefit": "Cuatro ganchos y una balda para el móvil y la cartera.",
       "materials": [
-        { "id": "pla", "label": "PLA", "extra": 0 },
-        { "id": "petg", "label": "PETG", "extra": 2 }
+        {
+          "id": "pla",
+          "label": "PLA",
+          "extra": 0
+        },
+        {
+          "id": "petg",
+          "label": "PETG",
+          "extra": 2
+        }
       ],
       "colors": [
-        { "name": "Negro", "hex": "#1B1F27" },
-        { "name": "Blanco", "hex": "#F1EFE9" }
+        {
+          "name": "Negro",
+          "hex": "#1B1F27"
+        },
+        {
+          "name": "Blanco",
+          "hex": "#F1EFE9"
+        }
       ],
       "specs": {
         "Medidas": "22 × 19 × 6 cm",
@@ -113,13 +196,30 @@
       "img": "",
       "benefit": "Tiradas justas y silenciosas para tus partidas.",
       "materials": [
-        { "id": "pla", "label": "PLA", "extra": 0 },
-        { "id": "petg", "label": "PETG", "extra": 3 }
+        {
+          "id": "pla",
+          "label": "PLA",
+          "extra": 0
+        },
+        {
+          "id": "petg",
+          "label": "PETG",
+          "extra": 3
+        }
       ],
       "colors": [
-        { "name": "Negro", "hex": "#1B1F27" },
-        { "name": "Naranja", "hex": "#F97316" },
-        { "name": "Azul", "hex": "#2563EB" }
+        {
+          "name": "Negro",
+          "hex": "#1B1F27"
+        },
+        {
+          "name": "Naranja",
+          "hex": "#F97316"
+        },
+        {
+          "name": "Azul",
+          "hex": "#2563EB"
+        }
       ],
       "specs": {
         "Medidas": "8 × 8 × 15 cm",
@@ -136,13 +236,30 @@
       "img": "",
       "benefit": "Juega con el móvil a la altura de los ojos.",
       "materials": [
-        { "id": "pla", "label": "PLA", "extra": 0 },
-        { "id": "petg", "label": "PETG", "extra": 2 }
+        {
+          "id": "pla",
+          "label": "PLA",
+          "extra": 0
+        },
+        {
+          "id": "petg",
+          "label": "PETG",
+          "extra": 2
+        }
       ],
       "colors": [
-        { "name": "Negro", "hex": "#1B1F27" },
-        { "name": "Blanco", "hex": "#F1EFE9" },
-        { "name": "Rojo", "hex": "#C0392B" }
+        {
+          "name": "Negro",
+          "hex": "#1B1F27"
+        },
+        {
+          "name": "Blanco",
+          "hex": "#F1EFE9"
+        },
+        {
+          "name": "Rojo",
+          "hex": "#C0392B"
+        }
       ],
       "specs": {
         "Medidas": "14 × 11 × 9 cm",
@@ -159,13 +276,30 @@
       "img": "",
       "benefit": "Un detalle pequeño, ligero y resistente.",
       "materials": [
-        { "id": "pla", "label": "PLA", "extra": 0 },
-        { "id": "petg", "label": "PETG", "extra": 1 }
+        {
+          "id": "pla",
+          "label": "PLA",
+          "extra": 0
+        },
+        {
+          "id": "petg",
+          "label": "PETG",
+          "extra": 1
+        }
       ],
       "colors": [
-        { "name": "Naranja", "hex": "#F97316" },
-        { "name": "Negro", "hex": "#1B1F27" },
-        { "name": "Verde", "hex": "#1F9D55" }
+        {
+          "name": "Naranja",
+          "hex": "#F97316"
+        },
+        {
+          "name": "Negro",
+          "hex": "#1B1F27"
+        },
+        {
+          "name": "Verde",
+          "hex": "#1F9D55"
+        }
       ],
       "specs": {
         "Medidas": "4 × 4 × 0,6 cm",
@@ -182,13 +316,30 @@
       "img": "",
       "benefit": "Una caja con tapa que gira. Perfecta para regalar.",
       "materials": [
-        { "id": "pla", "label": "PLA", "extra": 0 },
-        { "id": "petg", "label": "PETG", "extra": 3 }
+        {
+          "id": "pla",
+          "label": "PLA",
+          "extra": 0
+        },
+        {
+          "id": "petg",
+          "label": "PETG",
+          "extra": 3
+        }
       ],
       "colors": [
-        { "name": "Negro", "hex": "#1B1F27" },
-        { "name": "Blanco", "hex": "#F1EFE9" },
-        { "name": "Naranja", "hex": "#F97316" }
+        {
+          "name": "Negro",
+          "hex": "#1B1F27"
+        },
+        {
+          "name": "Blanco",
+          "hex": "#F1EFE9"
+        },
+        {
+          "name": "Naranja",
+          "hex": "#F97316"
+        }
       ],
       "specs": {
         "Medidas": "10 × 10 × 7 cm",

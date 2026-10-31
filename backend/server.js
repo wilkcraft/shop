@@ -9,6 +9,8 @@ const jwt = require("jsonwebtoken");
 const rateLimit = require("express-rate-limit");
 const multer = require("multer");
 const nodemailer = require("nodemailer");
+const crypto = require("crypto");
+const sha256 = (s) => crypto.createHash("sha256").update(s).digest("hex");
 
 const {
   PORT = 50589,
@@ -49,7 +51,6 @@ const mailer =
 if (!mailer)
   console.warn("SMTP no configurado: no se enviarán emails de confirmación");
 
-// ---------- Catálogo (products.json) ----------
 const CATALOG = JSON.parse(
   fs.readFileSync(path.join(__dirname, "products.json"), "utf8"),
 );
@@ -59,7 +60,6 @@ const PRODUCT_MAP = new Map(CATALOG.products.map((p) => [p.id, p]));
 const unitPrice = (p, materialId) =>
   p.price + (p.materials.find((m) => m.id === materialId)?.extra || 0);
 
-// ---------- Base de datos ----------
 const dataDir = path.join(__dirname, "data");
 fs.mkdirSync(dataDir, { recursive: true });
 const db = new Database(path.join(dataDir, "shop.db"));
@@ -102,10 +102,31 @@ if (
 )
   db.exec("ALTER TABLE users ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0");
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS password_resets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    token_hash TEXT NOT NULL UNIQUE,
+    expires_at INTEGER NOT NULL
+  );
+`);
+const addCol = (table, col, def) => {
+  if (
+    !db
+      .prepare(`PRAGMA table_info(${table})`)
+      .all()
+      .some((c) => c.name === col)
+  )
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${col} ${def}`);
+};
+addCol("orders", "tracking", "TEXT");
+addCol("orders", "carrier", "TEXT");
+addCol("orders", "shipped_at", "TEXT");
+addCol("orders", "user_id", "INTEGER");
+
 const app = express();
 app.set("trust proxy", 1);
 
-// ---------- Utilidades ----------
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const esc = (s) =>
   String(s).replace(
@@ -130,14 +151,20 @@ function addBusinessDays(n) {
   return d;
 }
 
-// Normaliza el carrito: solo ids, variantes válidas y cantidades. Los precios nunca vienen del cliente.
 function sanitizeItems(raw) {
   if (!Array.isArray(raw)) return [];
   const merged = new Map();
   for (const it of raw) {
     const p = PRODUCT_MAP.get(Number(it?.id));
     const qty = Math.floor(Number(it?.quantity));
-    if (!p || !Number.isFinite(qty) || qty < 1) continue;
+    if (
+      !p ||
+      p.visible === false ||
+      p.soldOut ||
+      !Number.isFinite(qty) ||
+      qty < 1
+    )
+      continue;
     const material = p.materials.some((m) => m.id === it.material)
       ? it.material
       : p.materials[0].id;
@@ -156,7 +183,6 @@ function sanitizeItems(raw) {
   return [...merged.values()];
 }
 
-// Líneas del pedido con precios en céntimos (se guardan como "foto" del momento de la compra)
 function describeItems(items) {
   return items.map((it) => {
     const p = PRODUCT_MAP.get(it.id);
@@ -207,13 +233,11 @@ function validateCustomer(c) {
   return { value: out };
 }
 
-// ---------- Notificaciones: Discord y email ----------
 async function sendDiscord(payload) {
   if (!DISCORD_WEBHOOK_URL) return;
   const r = await fetch(DISCORD_WEBHOOK_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    // allowed_mentions vacío: ningún texto del cliente puede mencionar a @everyone ni a nadie
     body: JSON.stringify({
       username: "Capalab",
       allowed_mentions: { parse: [] },
@@ -419,7 +443,80 @@ async function emailOrderConfirmation(o) {
   });
 }
 
-// Marca el pedido como pagado y avisa UNA sola vez, lo llame el webhook de Stripe o el navegador.
+async function emailOrderShipped(o) {
+  if (!mailer) return false;
+  const c = o.customer;
+  const num = orderNumber(o.id);
+  const first = c.name.split(" ")[0];
+
+  const box = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:20px;background:#FAFAF7;border:1px solid #EEEBE3;border-radius:12px"><tr><td style="padding:16px;font-size:14px;line-height:1.8;color:#3b4049">
+    <strong>Pedido:</strong> ${num}<br>
+    ${o.carrier ? `<strong>Transportista:</strong> ${esc(o.carrier)}<br>` : ""}
+    <strong>Seguimiento:</strong> ${o.tracking ? esc(o.tracking) : "no disponible"}<br>
+    <strong>Entrega en:</strong> ${esc(c.address)}, ${esc(c.postal)} ${esc(c.city)}
+  </td></tr></table>`;
+
+  await mailer.sendMail({
+    from: MAIL_FROM || SMTP_USER,
+    to: c.email,
+    replyTo: SHOP_EMAIL,
+    subject: `Tu pedido ${num} ha salido – ${SHOP.brand}`,
+    text: [
+      `¡Tu pedido ${num} ha salido, ${first}!`,
+      o.carrier ? `Transportista: ${o.carrier}` : "",
+      `Seguimiento: ${o.tracking || "no disponible"}`,
+      `Entrega en: ${c.address}, ${c.postal} ${c.city}`,
+      `¿Dudas? Escribe a ${SHOP_EMAIL}.`,
+    ]
+      .filter(Boolean)
+      .join("\n"),
+    html: emailLayout({
+      preheader: `Tu pedido ${num} ya está en camino`,
+      title: `¡Tu pedido ha salido, ${esc(first)}!`,
+      intro: "Hemos terminado de imprimirlo y revisarlo. Ya está en camino.",
+      bodyHtml: box,
+      button: { label: "Ver mis pedidos", url: SHOP_URL },
+    }),
+  });
+  return true;
+}
+
+function emailLayout({ preheader = "", title, intro, bodyHtml = "", button }) {
+  return `<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#F1EFE9">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent">${esc(preheader)}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F1EFE9;padding:24px 12px"><tr><td align="center">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:18px;overflow:hidden;font-family:Arial,Helvetica,sans-serif;color:#16181D">
+  <tr><td style="background:#1B1F27;padding:22px 32px"><span style="font-size:24px;font-weight:bold;color:#ffffff">${esc(SHOP.brand)}</span><span style="color:#F97316;font-size:24px;font-weight:bold">.</span></td></tr>
+  <tr><td style="background:#C2410C;height:4px;line-height:4px;font-size:0">&nbsp;</td></tr>
+  <tr><td style="padding:32px">
+    <h1 style="margin:0 0 10px;font-size:24px;line-height:1.25">${title}</h1>
+    <p style="margin:0;color:#5F646C;font-size:15px;line-height:1.6">${intro}</p>
+    ${bodyHtml}
+    ${button ? `<p style="margin:24px 0 0"><a href="${button.url}" style="display:inline-block;background:#C2410C;color:#ffffff;text-decoration:none;font-weight:bold;font-size:15px;padding:13px 28px;border-radius:12px">${esc(button.label)}</a></p>` : ""}
+  </td></tr>
+  <tr><td style="padding:0 32px 28px"><p style="margin:0;border-top:1px solid #EEEBE3;padding-top:18px;font-size:12px;color:#8A8F97;text-align:center">© ${new Date().getFullYear()} ${esc(SHOP.brand)} · ${esc(SHOP_EMAIL)}</p></td></tr>
+</table></td></tr></table></body></html>`;
+}
+
+async function emailPasswordReset(to, link) {
+  await mailer.sendMail({
+    from: MAIL_FROM || SMTP_USER,
+    to,
+    subject: `Restablece tu contraseña – ${SHOP.brand}`,
+    text: `Has pedido restablecer tu contraseña de ${SHOP.brand}.\nCrea una nueva aquí (caduca en 1 hora):\n${link}\n\nSi no has sido tú, ignora este email.`,
+    html: emailLayout({
+      preheader: "Enlace para crear una contraseña nueva",
+      title: "Restablece tu contraseña",
+      intro:
+        "Hemos recibido una solicitud para cambiar la contraseña de tu cuenta.",
+      bodyHtml: `<p style="margin:16px 0 0;color:#5F646C;font-size:13px;line-height:1.6">El enlace caduca en 1 hora. Si no has sido tú, ignora este email y tu contraseña seguirá igual.</p>`,
+      button: { label: "Crear contraseña nueva", url: link },
+    }),
+  });
+}
+
 async function markPaid(paymentIntentId) {
   const order = db
     .prepare("SELECT * FROM orders WHERE payment_intent = ?")
@@ -452,7 +549,6 @@ async function markPaid(paymentIntentId) {
   return order;
 }
 
-// ---------- Webhook de Stripe (debe ir ANTES de express.json) ----------
 app.post(
   "/api/stripe-webhook",
   express.raw({ type: "application/json" }),
@@ -491,6 +587,15 @@ const authLimiter = rateLimit({
   message: { error: "Demasiados intentos, inténtalo más tarde" },
 });
 
+function optionalUid(req) {
+  const h = req.headers.authorization || "";
+  try {
+    return jwt.verify(h.startsWith("Bearer ") ? h.slice(7) : h, JWT_SECRET).uid;
+  } catch {
+    return null;
+  }
+}
+
 const checkoutLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 30,
@@ -510,10 +615,13 @@ function auth(req, res, next) {
   }
 }
 
-// ---------- Catálogo ----------
-app.get("/api/products", (req, res) => res.json(CATALOG));
+app.get("/api/products", (req, res) =>
+  res.json({
+    config: CATALOG.config,
+    products: CATALOG.products.filter((p) => p.visible !== false),
+  }),
+);
 
-// ---------- Usuarios ----------
 app.post("/api/register", authLimiter, async (req, res) => {
   const email = String(req.body?.email || "")
     .trim()
@@ -556,6 +664,63 @@ app.post("/api/login", authLimiter, async (req, res) => {
   res.json({ token, isAdmin: !!user.is_admin });
 });
 
+const forgotLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Demasiados intentos, inténtalo más tarde" },
+});
+
+app.post("/api/forgot-password", forgotLimiter, async (req, res) => {
+  const email = String(req.body?.email || "")
+    .trim()
+    .toLowerCase();
+  if (!EMAIL_RE.test(email))
+    return res.status(400).json({ error: "Email no válido" });
+  res.json({ ok: true });
+
+  const user = db.prepare("SELECT id FROM users WHERE email = ?").get(email);
+  if (!user || !mailer) return;
+  try {
+    const token = crypto.randomBytes(32).toString("hex");
+    db.prepare("DELETE FROM password_resets WHERE user_id = ?").run(user.id);
+    db.prepare(
+      "INSERT INTO password_resets (user_id, token_hash, expires_at) VALUES (?, ?, ?)",
+    ).run(user.id, sha256(token), Date.now() + 60 * 60 * 1000);
+    await emailPasswordReset(email, `${SHOP_URL}/?reset=${token}`);
+  } catch (err) {
+    console.error("forgot-password error:", err.message);
+  }
+});
+
+app.post("/api/reset-password", authLimiter, async (req, res) => {
+  const token = String(req.body?.token || "");
+  const password = String(req.body?.password || "");
+  if (password.length < 8)
+    return res
+      .status(400)
+      .json({ error: "La contraseña debe tener al menos 8 caracteres" });
+
+  const row = /^[a-f0-9]{64}$/.test(token)
+    ? db
+        .prepare("SELECT * FROM password_resets WHERE token_hash = ?")
+        .get(sha256(token))
+    : null;
+  if (!row || row.expires_at < Date.now())
+    return res
+      .status(400)
+      .json({ error: "El enlace no es válido o ha caducado. Pide uno nuevo." });
+
+  const hash = await bcrypt.hash(password, 12);
+  db.prepare("UPDATE users SET password_hash = ? WHERE id = ?").run(
+    hash,
+    row.user_id,
+  );
+  db.prepare("DELETE FROM password_resets WHERE user_id = ?").run(row.user_id);
+  res.json({ ok: true });
+});
+
 app.delete("/api/delete-account", auth, (req, res) => {
   db.prepare("DELETE FROM users WHERE id = ?").run(req.user.uid);
   res.json({ ok: true });
@@ -569,7 +734,6 @@ app.get("/api/me", auth, (req, res) => {
   res.json({ email: u.email, isAdmin: !!u.is_admin });
 });
 
-// ---------- Carrito ----------
 app.get("/api/cart", auth, (req, res) => {
   const row = db
     .prepare("SELECT items FROM carts WHERE user_id = ?")
@@ -586,7 +750,6 @@ app.post("/api/cart", auth, (req, res) => {
   res.json({ ok: true });
 });
 
-// ---------- Pago: datos de envío + PaymentIntent ----------
 app.post("/api/create-payment-intent", checkoutLimiter, async (req, res) => {
   const items = sanitizeItems(req.body?.items);
   if (items.length === 0)
@@ -623,8 +786,8 @@ app.post("/api/create-payment-intent", checkoutLimiter, async (req, res) => {
     });
 
     db.prepare(
-      `INSERT INTO orders (payment_intent, email, customer, items, subtotal, shipping, total)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO orders (payment_intent, email, customer, items, subtotal, shipping, total, user_id)
+   VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     ).run(
       intent.id,
       customer.email,
@@ -633,6 +796,7 @@ app.post("/api/create-payment-intent", checkoutLimiter, async (req, res) => {
       totals.subtotal,
       totals.shipping,
       totals.total,
+      optionalUid(req),
     );
 
     res.json({ clientSecret: intent.client_secret });
@@ -642,7 +806,22 @@ app.post("/api/create-payment-intent", checkoutLimiter, async (req, res) => {
   }
 });
 
-// El navegador avisa tras pagar. Verificamos con Stripe antes de fiarnos.
+app.get("/api/my-orders", auth, (req, res) => {
+  const rows = db
+    .prepare(
+      `SELECT id, status, items, subtotal, shipping, total, created_at, tracking, carrier
+       FROM orders WHERE user_id = ? AND status != 'pending' ORDER BY id DESC LIMIT 50`,
+    )
+    .all(req.user.uid);
+  res.json(
+    rows.map((o) => ({
+      ...o,
+      number: orderNumber(o.id),
+      items: JSON.parse(o.items),
+    })),
+  );
+});
+
 app.post("/api/order-complete", checkoutLimiter, async (req, res) => {
   const id = String(req.body?.paymentIntentId || "");
   if (!/^pi_\w+$/.test(id))
@@ -660,7 +839,6 @@ app.post("/api/order-complete", checkoutLimiter, async (req, res) => {
   }
 });
 
-// ---------- Pedidos a medida (subida de STL) ----------
 const uploadsDir = path.join(dataDir, "uploads");
 fs.mkdirSync(uploadsDir, { recursive: true });
 
@@ -753,9 +931,42 @@ app.post("/api/custom-request", quoteLimiter, (req, res) => {
   });
 });
 
+const catalogClients = new Set();
+
+app.get("/api/catalog-events", (req, res) => {
+  res.set({
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache, no-transform",
+    Connection: "keep-alive",
+    "X-Accel-Buffering": "no",
+  });
+  res.flushHeaders();
+  res.write("retry: 3000\n\n");
+  catalogClients.add(res);
+  req.on("close", () => catalogClients.delete(res));
+});
+
+setInterval(() => {
+  for (const r of catalogClients) r.write(": ping\n\n");
+}, 25000);
+
+function broadcastCatalog() {
+  for (const r of catalogClients)
+    r.write(`event: catalog\ndata: ${Date.now()}\n\n`);
+}
+
 app.use(
   "/api/admin",
-  require("./admin")({ db, auth, CATALOG, PRODUCT_MAP, dataDir, orderNumber }),
+  require("./admin")({
+    db,
+    auth,
+    CATALOG,
+    PRODUCT_MAP,
+    dataDir,
+    orderNumber,
+    sendShippedEmail: emailOrderShipped,
+    onCatalogChange: broadcastCatalog,
+  }),
 );
 
 app.use("/api", (req, res) => res.status(404).json({ error: "No encontrado" }));

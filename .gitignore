@@ -10,3 +10,6 @@ backend/data/
 
 # Logs
 *.log
+
+img/*
+!img/.gitkeep

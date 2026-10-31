@@ -115,7 +115,6 @@
       </symbol>
     </svg>
 
-    <!-- Comprobando permisos -->
     <div id="gate" class="min-h-screen flex items-center justify-center">
       <div
         class="w-12 h-12 rounded-full border-4 border-line border-t-accb animate-spin"
@@ -124,7 +123,6 @@
       ></div>
     </div>
 
-    <!-- Acceso no permitido -->
     <div
       id="denied"
       class="hidden min-h-screen items-center justify-center p-4 bg-surf"
@@ -160,7 +158,6 @@
       </div>
     </div>
 
-    <!-- Panel -->
     <div id="panel" class="hidden">
       <header class="bg-dark text-bg">
         <div
@@ -198,7 +195,6 @@
       <main id="view" class="max-w-6xl mx-auto px-4 py-8"></main>
     </div>
 
-    <!-- Modal -->
     <div
       id="modal"
       class="fixed inset-0 z-[80] hidden bg-black/50 flex items-end md:items-center justify-center"
@@ -287,7 +283,6 @@
         return d;
       }
 
-      /* ---------- Acceso denegado ---------- */
       function deny() {
         $("gate").classList.add("hidden");
         $("denied").classList.remove("hidden");
@@ -303,7 +298,6 @@
         }, 1000);
       }
 
-      /* ---------- Pestañas ---------- */
       const TABS = {
         orders: ["Pedidos", viewOrders],
         products: ["Productos", viewProducts],
@@ -337,7 +331,6 @@
       const h2 = (t) =>
         `<h2 class="font-head font-bold text-2xl md:text-3xl">${t}</h2>`;
 
-      /* ---------- Pedidos ---------- */
       let ORDERS = [],
         ofilter = "all";
 
@@ -410,9 +403,10 @@
               <p><a class="underline" href="mailto:${esc(c.email)}">${esc(c.email)}</a>${c.phone ? " · " + esc(c.phone) : ""}</p>
               <p>${esc(c.address)}, ${esc(c.postal)} ${esc(c.city)} (${esc(c.province)})</p>
               <p class="text-xs text-mute mt-2 break-all">${esc(o.payment_intent)}</p>
+              ${o.tracking ? `<p class="mt-2">Seguimiento: <b>${esc(o.carrier || "")} ${esc(o.tracking)}</b></p>` : ""}
             </div>
             <label class="md:col-span-2 flex items-center gap-3 font-semibold">Estado
-              <select onchange="setStatus(${o.id}, this.value)" class="border border-line rounded-xl px-3 min-h-[44px] bg-white font-normal">
+              <select onchange="changeStatus(${o.id}, this)" class="border border-line rounded-xl px-3 min-h-[44px] bg-white font-normal">
                 ${Object.entries(ST)
                   .map(
                     ([k, v]) =>
@@ -439,34 +433,105 @@
         }
       }
 
-      /* ---------- Productos ---------- */
+      function changeStatus(id, sel) {
+        const o = ORDERS.find((x) => x.id === id);
+        if (sel.value === "shipped" && o.status !== "shipped") {
+          sel.value = o.status;
+          return shipModal(id);
+        }
+        setStatus(id, sel.value);
+      }
+
+      function shipModal(id) {
+        const o = ORDERS.find((x) => x.id === id);
+        $("modal-body").innerHTML = `
+    <h3 class="font-head font-bold text-xl mb-1">Marcar ${esc(o.number)} como enviado</h3>
+    <p class="text-sm text-mute mb-4">Se enviará un email a ${esc(o.customer.email)} avisando de que su pedido ha salido.</p>
+    <form onsubmit="confirmShip(event, ${id})" class="space-y-3">
+      <input name="carrier" placeholder="Transportista (Correos, SEUR…)" class="${INP}">
+      <input name="tracking" placeholder="Número de seguimiento" class="${INP}">
+      <p id="smsg" class="text-err text-sm text-center" role="alert"></p>
+      <div class="flex gap-3">
+        <button type="button" onclick="closeModal()" class="min-h-[48px] px-5 rounded-xl border-2 border-dark font-semibold">Cancelar</button>
+        <button data-ok class="${BTN} flex-1">Enviar y avisar</button>
+      </div>
+    </form>`;
+        $("modal").classList.remove("hidden");
+      }
+
+      async function confirmShip(e, id) {
+        e.preventDefault();
+        const f = e.target,
+          ok = f.querySelector("[data-ok]");
+        ok.disabled = true;
+        try {
+          const d = await api("/orders/" + id, {
+            method: "PATCH",
+            body: JSON.stringify({
+              status: "shipped",
+              carrier: f.elements.carrier.value,
+              tracking: f.elements.tracking.value,
+            }),
+          });
+          closeModal();
+          toast(
+            d.emailed
+              ? "Enviado y cliente avisado por email"
+              : "Marcado como enviado, pero no se pudo enviar el email",
+            !d.emailed,
+          );
+          viewOrders();
+        } catch (err) {
+          ok.disabled = false;
+          $("smsg").textContent = err.message;
+        }
+      }
+
       let PRODS = [],
         CATS = [];
       const catName = (id) => CATS.find((c) => c.id === id)?.name || id;
 
       async function viewProducts() {
-        const d = await (await fetch("/api/products")).json();
+        const d = await api("/products");
         PRODS = d.products;
         CATS = d.config.categories;
+        const flag = (on, label, onCls) =>
+          `class="min-h-[44px] px-3 rounded-xl text-sm font-medium border-2 ${on ? onCls : "border-line text-mute"}">${label}`;
         $("view").innerHTML = `
-          <div class="flex justify-between items-center gap-3 mb-6">
-            ${h2("Productos")}
-            <button onclick="editProduct()" class="${BTN}">Nuevo producto</button>
-          </div>
-          <div class="space-y-3">${PRODS.map(
-            (p) => `
-            <div class="bg-white border border-line rounded-2xl p-3 flex items-center gap-3">
-              <div class="w-14 h-14 rounded-xl bg-surf overflow-hidden shrink-0 flex items-center justify-center text-acc">
-                ${p.img ? `<img src="${esc(p.img)}" alt="" class="w-full h-full object-cover">` : '<svg class="w-7 h-7" aria-hidden="true"><use href="#i-box"/></svg>'}
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="font-semibold truncate">${esc(p.name)}</p>
-                <p class="text-sm text-mute">${esc(catName(p.category))} · ${eur(p.price)}${p.tag ? " · " + esc(p.tag) : ""}</p>
-              </div>
-              <button onclick="editProduct(${p.id})" class="min-h-[44px] px-4 border-2 border-dark rounded-xl text-sm font-semibold hover:bg-dark hover:text-white transition">Editar</button>
-              <button onclick="delProduct(${p.id})" class="w-11 h-11 flex items-center justify-center text-mute hover:text-err" aria-label="Eliminar"><svg class="w-5 h-5" aria-hidden="true"><use href="#i-trash"/></svg></button>
-            </div>`,
-          ).join("")}</div>`;
+    <div class="flex justify-between items-center gap-3 mb-6">
+      ${h2("Productos")}
+      <button onclick="editProduct()" class="${BTN}">Nuevo producto</button>
+    </div>
+    <div class="space-y-3">${PRODS.map(
+      (p) => `
+      <div class="bg-white border border-line rounded-2xl p-3 flex flex-wrap items-center gap-3 ${p.visible === false ? "opacity-60" : ""}">
+        <div class="w-14 h-14 rounded-xl bg-surf overflow-hidden shrink-0 flex items-center justify-center text-acc">
+          ${p.img ? `<img src="${esc(p.img)}" alt="" class="w-full h-full object-cover">` : '<svg class="w-7 h-7" aria-hidden="true"><use href="#i-box"/></svg>'}
+        </div>
+        <div class="flex-1 min-w-[8rem]">
+          <p class="font-semibold truncate">${esc(p.name)}</p>
+          <p class="text-sm text-mute">${esc(catName(p.category))} · ${eur(p.price)}${p.tag ? " · " + esc(p.tag) : ""}</p>
+        </div>
+        <button onclick="toggleFlag(${p.id}, 'visible')" ${flag(p.visible !== false, p.visible === false ? "Oculto" : "Visible", "border-ok text-ok")}</button>
+        <button onclick="toggleFlag(${p.id}, 'soldOut')" ${flag(p.soldOut, p.soldOut ? "Agotado" : "En stock", "border-err text-err")}</button>
+        <button onclick="editProduct(${p.id})" class="min-h-[44px] px-4 border-2 border-dark rounded-xl text-sm font-semibold hover:bg-dark hover:text-white transition">Editar</button>
+        <button onclick="delProduct(${p.id})" class="w-11 h-11 flex items-center justify-center text-mute hover:text-err" aria-label="Eliminar"><svg class="w-5 h-5" aria-hidden="true"><use href="#i-trash"/></svg></button>
+      </div>`,
+    ).join("")}</div>`;
+      }
+
+      async function toggleFlag(id, key) {
+        const p = PRODS.find((x) => x.id === id);
+        const next = key === "visible" ? p.visible === false : !p.soldOut;
+        try {
+          await api("/products/" + id, {
+            method: "PUT",
+            body: JSON.stringify({ ...p, [key]: next }),
+          });
+          viewProducts();
+        } catch (e) {
+          toast(e.message, true);
+        }
       }
 
       function editProduct(id) {
@@ -497,9 +562,17 @@
               ${lab("Categoría", `<select name="category" class="${INP} mt-1 font-normal">${CATS.map((c) => `<option value="${esc(c.id)}" ${c.id === p.category ? "selected" : ""}>${esc(c.name)}</option>`).join("")}</select>`)}
               ${lab("Precio base (€)", `<input name="price" inputmode="decimal" required value="${esc(p.price)}" class="${INP} mt-1 font-normal">`)}
             </div>
-            <div class="grid grid-cols-2 gap-3">
-              ${lab("Etiqueta", `<input name="tag" value="${esc(p.tag)}" placeholder="Nuevo, Más vendido…" class="${INP} mt-1 font-normal">`)}
-              ${lab("Imagen", `<input name="img" value="${esc(p.img)}" placeholder="/img/producto.jpg" class="${INP} mt-1 font-normal">`)}
+            ${lab("Etiqueta", `<input name="tag" value="${esc(p.tag)}" placeholder="Nuevo, Más vendido…" class="${INP} mt-1 font-normal">`)}
+            <div class="text-sm font-semibold">Imagen
+              <div class="mt-1 flex items-center gap-3">
+                <img id="img-prev" src="${esc(p.img)}" alt="" class="w-16 h-16 rounded-xl object-cover bg-surf ${p.img ? "" : "hidden"}">
+                <label class="flex-1 border border-dashed border-line rounded-xl px-3 min-h-[48px] flex items-center text-sm font-normal text-mute cursor-pointer">
+                  Subir foto (JPG, PNG o WebP)
+                  <input type="file" accept="image/jpeg,image/png,image/webp" class="sr-only" onchange="uploadImg(this)">
+                </label>
+              </div>
+              <input id="img-input" name="img" value="${esc(p.img)}" placeholder="/img/producto.jpg" class="${INP} mt-2 font-normal">
+              <span id="imgmsg" class="block text-xs font-normal text-mute mt-1">Máx. 5 MB. También puedes escribir una ruta a mano.</span>
             </div>
             ${lab("Descripción corta", `<input name="benefit" value="${esc(p.benefit)}" class="${INP} mt-1 font-normal">`)}
             ${lab("Materiales", `<textarea name="materials" rows="3" class="${INP} py-2 mt-1 font-normal">${esc(p.materials.map((m) => `${m.id} | ${m.label} | ${m.extra}`).join("\n"))}</textarea>`, "Uno por línea: id | etiqueta | extra en €")}
@@ -513,6 +586,10 @@
               )}</textarea>`,
               "Una por línea: clave: valor",
             )}
+            <div class="flex gap-6 text-sm font-medium">
+              <label class="flex items-center gap-2 min-h-[44px]"><input type="checkbox" name="visible" class="w-5 h-5 accent-acc" ${p.visible !== false ? "checked" : ""}> Visible en la tienda</label>
+              <label class="flex items-center gap-2 min-h-[44px]"><input type="checkbox" name="soldOut" class="w-5 h-5 accent-acc" ${p.soldOut ? "checked" : ""}> Agotado</label>
+            </div>
             <p id="pmsg" class="text-err text-sm text-center" role="alert"></p>
             <button class="w-full ${BTN} min-h-[52px]">Guardar</button>
           </form>`;
@@ -542,6 +619,8 @@
           tag: g("tag"),
           img: g("img"),
           benefit: g("benefit"),
+          visible: f.elements.visible.checked,
+          soldOut: f.elements.soldOut.checked,
           materials: lines(g("materials")).map((l) => {
             const [i, label, extra] = l.split("|").map((x) => x.trim());
             return { id: i, label, extra: num(extra) };
@@ -584,7 +663,6 @@
         }
       }
 
-      /* ---------- Pedidos a medida ---------- */
       let REQS = [];
       async function viewRequests() {
         REQS = await api("/requests");
@@ -624,7 +702,6 @@
         }
       }
 
-      /* ---------- Usuarios ---------- */
       async function viewUsers() {
         const users = await api("/users");
         $("view").innerHTML = `<div class="mb-6">${h2("Usuarios")}</div>
@@ -660,11 +737,34 @@
         }
       }
 
+      async function uploadImg(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const fd = new FormData();
+        fd.append("image", file);
+        $("imgmsg").textContent = "Subiendo…";
+        try {
+          const r = await fetch("/api/admin/upload-image", {
+            method: "POST",
+            headers: { Authorization: token },
+            body: fd,
+          });
+          const d = await r.json();
+          if (!r.ok) throw new Error(d.error || "Error al subir");
+          $("img-input").value = d.path;
+          $("img-prev").src = d.path;
+          $("img-prev").classList.remove("hidden");
+          $("imgmsg").textContent =
+            "Imagen subida. Pulsa Guardar para aplicarla al producto.";
+        } catch (e) {
+          $("imgmsg").textContent = e.message;
+        }
+      }
+
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") closeModal();
       });
 
-      /* ---------- Arranque ---------- */
       (async () => {
         if (!token) return deny();
         try {
